@@ -24,17 +24,7 @@ class App extends Component {
     this.buildJSON = this.buildJSON.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.state = {
-      rules: [ {
-        operator: '>',
-        operand: 'test',
-        hex: '98FB98'
-      },
-      {
-        operator: '>=',
-        operand: 'test2',
-        hex: 'FFFF66'
-      }
-     ],
+      rules: [],
       JSON: '',
       operator: '<',
       operand: '',
