@@ -80,7 +80,8 @@ class App extends Component {
 
   buildJSON() {
     var JSON_Body = ``;
-    var JSON_Header = `{
+    var JSON_Header = 
+    `{
       "elmType": "div",
       "txtContent": "@currentField",
       "style": {
@@ -89,7 +90,8 @@ class App extends Component {
 
     // JSON Body
     this.state.rules.forEach((ele) => {
-      JSON_Body = JSON_Body + `{
+      JSON_Body = JSON_Body + `
+      {
         "operator": "?",
         "operands": [
         {
@@ -99,19 +101,18 @@ class App extends Component {
                 ` + (this.state.fieldType != 'Number' ? `"` + ele.operand + `"` : ele.operand) + `
             ]
         },
-        "#` + ele.hex + `",
-      
-      `
+        "#` + ele.hex + `", `
     });
 
     // JSON Footer 
     var JSON_Footer_Base = `"#FFFFFF00"`;
     this.state.rules.forEach((ele) => {
       JSON_Footer = JSON_Footer + `
-    ]}`
+      ]
+    }`
     });
-    JSON_Footer = JSON_Footer_Base + JSON_Footer + `
-      }
+    JSON_Footer = JSON_Footer_Base + JSON_Footer + 
+    ` }
     }`;
 
     // Set Output
