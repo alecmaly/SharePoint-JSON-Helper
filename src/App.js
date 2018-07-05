@@ -199,7 +199,7 @@ class App extends Component {
             </Col>
             <Col sm='2' md='3' lg='3'>
               <br />
-              <Button size='lg' color='info' onClick={this.addRule}>Submit</Button>
+              <Button size='lg' color='info' onClick={this.addRule}>Add Rule</Button>
             </Col>
             <Col sm='2' md='3' lg='3'>
               <br />
