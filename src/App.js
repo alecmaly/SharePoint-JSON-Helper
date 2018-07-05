@@ -24,7 +24,23 @@ class App extends Component {
     this.buildJSON = this.buildJSON.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.state = {
-      rules: [],
+      rules: [
+        {
+          operator: '==',
+          operand: 'Completed',
+          hex: '98fb98'
+        },
+        {
+          operator: '==',
+          operand: 'In Progress',
+          hex: 'FFFF66'
+        },
+        {
+          operator: '==',
+          operand: 'Late',
+          hex: 'ff6a6a'
+        }
+      ],
       JSON: '',
       operator: '<',
       operand: '',
@@ -41,6 +57,10 @@ class App extends Component {
         'Custom': ''
       }
     };
+  }
+
+  componentDidMount() {
+    this.buildJSON();
   }
 
   addRule() {
