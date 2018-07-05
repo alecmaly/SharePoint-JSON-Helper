@@ -169,7 +169,7 @@ class App extends Component {
         <header>  
           <Jumbotron className='banner' color='red'>
             <h2>SharePoint Helper</h2>
-            <p>Used for building conditional formatting JSON <br />
+            <p>Used for building conditional formatting JSON - <a target='_blank' href='https://docs.microsoft.com/en-us/sharepoint/dev/declarative-customization/column-formatting'>Microsoft Docs</a> <br />
             Note: Rules are read from top to bottom.
             </p>
           </Jumbotron>
