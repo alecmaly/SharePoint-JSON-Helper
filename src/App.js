@@ -149,7 +149,9 @@ class App extends Component {
         <header>  
           <Jumbotron className='banner' color='red'>
             <h2>SharePoint Helper</h2>
-            <p>Used for building conditional formatting JSON</p>
+            <p>Used for building conditional formatting JSON <br />
+            Note: Rules are read from top to bottom.
+            </p>
           </Jumbotron>
         </header>
 
