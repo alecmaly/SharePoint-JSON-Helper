@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Rule from './Rule.jsx';
-import { Button } from 'reactstrap';
 
 class CurrentRules extends Component {
     

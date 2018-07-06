@@ -10,8 +10,6 @@ import {
   Col,
   Button,
   Input,
-  Form,
-  FormGroup,
   Label
 } from 'reactstrap';
 
@@ -109,7 +107,7 @@ class App extends Component {
   }
 
   deleteRule() {
-    if (this.state.selectedRule != '') {
+    if (this.state.selectedRule !==  '') {
       var arr = this.state.rules;
       var deleted_Hex = arr[this.state.selectedRule].hex;
       delete arr[this.state.selectedRule];
@@ -151,7 +149,7 @@ class App extends Component {
             "operator": "` + ele.operator + `",
             "operands": [
                 "@currentField",
-                ` + (this.state.fieldType != 'Number' ? `"` + ele.operand + `"` : ele.operand) + `
+                ` + (this.state.fieldType !== 'Number' ? `"` + ele.operand + `"` : ele.operand) + `
             ]
         },
         "#` + ele.hex + `", `
@@ -187,7 +185,7 @@ class App extends Component {
       // additional actions based on button clicked
       switch(name) {
         case 'color': 
-          if (value != 'Custom') {
+          if (value !== 'Custom') {
             this.setState({
               hex: this.state.colors[value]
             });
@@ -262,23 +260,23 @@ class App extends Component {
                 
               </Input>  
             </Col>
-            <Col sm='3' md='4' lg='4'>
+            <Col sm='4' md='4' lg='3'>
               <br />
               <Button className='center-input' size='lg' color={this.state.selectedRule === '' ? 'success' : 'info'} onClick={this.state.selectedRule === '' ? this.newRule : this.editRule}>{this.state.selectedRule === '' ? 'New Rule' : 'Edit Rule'}</Button>
             </Col>
-            <Col sm='3' md='4' lg='4'>
+            <Col sm='4' md='4' lg='5'>
               <br />
               <Button className='center-input' size='lg' color='danger' onClick={this.clearRules}>Clear All Rules</Button>
             </Col>
           </Row>        
           <br />
         </Col>
-        <Col xs='12' sm='8' md='8' lg='3' xl='3'>
+        <Col xs='12' sm='8' md='8' lg='4' xl='4'>
             <Label>Rules<br />(Click to Select)</Label>
             <CurrentRules className='center-input' rules={this.state.rules} selectRule={this.selectRule} selectedRule={this.state.selectedRule} />
         </Col>
         <Col>
-          <br />
+          <br /><br />
           <Button className='center-input' color='danger' size='lg' style={this.state.selectedRule === '' ? {'visibility': 'hidden'} : {}} onClick={this.deleteRule}>Delete Rule</Button>
         </Col>
         

@@ -40,6 +40,7 @@ body {
   padding-bottom: 3px;
   border-style: solid;
   border-color: #606060;
+  user-select: none;
 }
 
 
@@ -58,8 +59,6 @@ body {
 .operand::placeholder {
   color: #b4b4b4;
 }
-
-
 
 .output {
   height: 22em;
