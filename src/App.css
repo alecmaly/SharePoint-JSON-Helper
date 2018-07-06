@@ -24,7 +24,6 @@
 
 .banner {
   padding-top: 3em;
-  max-height: 10em;
 }
 
 body {
@@ -39,7 +38,10 @@ body {
   cursor: pointer;
   padding-top: 3px;
   padding-bottom: 3px;
+  border-style: solid;
+  border-color: #606060;
 }
+
 
 .rules-container {
   border: 2px solid black;
@@ -49,16 +51,18 @@ body {
 
 .operator {
   text-align: center;
-  min-width: 4em;
-  max-width: 4em;
+  min-width: 5em;
+  max-width: 5em;
 }
 
-.operand {
-  min-width: 8em;
+.operand::placeholder {
+  color: #b4b4b4;
 }
+
+
 
 .output {
-  height: 15em;
+  height: 22em;
 }
 
 .color {
@@ -70,8 +74,10 @@ body {
   max-width: 5em;
 }
 
-.text {
-  text-align: right;
+.center-input {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 @keyframes App-logo-spin {

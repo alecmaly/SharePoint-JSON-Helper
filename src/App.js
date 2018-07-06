@@ -18,7 +18,9 @@ import {
 class App extends Component {
   constructor(props) {
     super(props);
-    this.addRule = this.addRule.bind(this);
+    this.newRule = this.newRule.bind(this);
+    this.selectRule = this.selectRule.bind(this);
+    this.editRule = this.editRule.bind(this);
     this.deleteRule = this.deleteRule.bind(this);
     this.clearRules = this.clearRules.bind(this);
     this.buildJSON = this.buildJSON.bind(this);
@@ -47,6 +49,7 @@ class App extends Component {
       color: '',
       hex: '98FB98',
       fieldType: 'Choice',
+      selectedRule: '',
       colors: {
         'Green': '98FB98',
         'Yellow': 'FFFF66',
@@ -63,7 +66,7 @@ class App extends Component {
     this.buildJSON();
   }
 
-  addRule() {
+  newRule() {
     var arr = this.state.rules.slice();
     arr.push({operator: this.state.operator, operand: this.state.operand, hex: this.state.hex});
     this.setState({
@@ -71,20 +74,60 @@ class App extends Component {
     }, () => this.buildJSON() );    
   }
 
-  deleteRule(index) {
-    var arr = this.state.rules;
-    var deleted_Hex = arr[index].hex;
-    delete arr[index];
+  selectRule(index) {
+    switch (index) {
+      case this.state.selectedRule:
+        //this.deleteRule();
+        this.setState({
+          selectedRule: '',
+          operand: ''
+        });
+        break;
+
+      default:
+      var rule = this.state.rules[index];
+      this.setState({
+        selectedRule: index,
+        operator: rule.operator,
+        operand: rule.operand,
+        fieldType: rule.fieldType,
+        color: 'Custom',
+        hex: rule.hex
+      });
+    } 
+  }
+
+  editRule() {
+    var arr = this.state.rules.slice();
+    
+    arr[this.state.selectedRule].operator = this.state.operator;
+    arr[this.state.selectedRule].operand = this.state.operand;
+    arr[this.state.selectedRule].hex = this.state.hex;
     this.setState({
-      rules: arr,
-      color: 'Custom',
-      hex: deleted_Hex
-    }, () => this.buildJSON() );
+      rules: arr
+    }, () => this.buildJSON() );    
+  }
+
+  deleteRule() {
+    if (this.state.selectedRule != '') {
+      var arr = this.state.rules;
+      var deleted_Hex = arr[this.state.selectedRule].hex;
+      delete arr[this.state.selectedRule];
+      this.setState({
+        rules: arr,
+        operand: '',
+        color: 'Custom',
+        hex: deleted_Hex,
+        selectedRule: ''
+      }, () => this.buildJSON() );
+    }
   }
   
   clearRules() {
     this.setState({
-      rules: []
+      rules: [],
+      operand: '',
+      selectedRule: ''
     }, () => this.buildJSON() );
   }
 
@@ -179,8 +222,8 @@ class App extends Component {
         <Col md='9' lg='6'>
           <Row>
             <Col sm='2'>
-              <Label>Operator:</Label>
-              <Input className='operator' type='select' name='operator' value={this.state.operator} onChange={this.handleInputChange}>
+              <Label>Operator</Label>
+              <Input className='operator center-input' type='select' name='operator' value={this.state.operator} onChange={this.handleInputChange}>
                 <option>&lt;</option>
                 <option>&gt;</option>
                 <option>==</option>
@@ -190,58 +233,62 @@ class App extends Component {
               </Input>  
             </Col>
             <Col sm='4'>
-              <Label>Operand:</Label>
-              <Input className='operand' type='text' name='operand' placeholder='Compare to' value={this.state.operand} onChange={this.handleInputChange} />
+              <Label>Operand</Label>
+              <Input className='operand center-input' type='text' name='operand' placeholder='Compare to' value={this.state.operand} onChange={this.handleInputChange} />
             </Col>
             <Col sm='3'>
-              <Label>Color:</Label>
-              <Input className='color' type='select' name='color' value={this.state.color} onChange={this.handleInputChange}>
+              <Label>Color</Label>
+              <Input className='color center-input' type='select' name='color' value={this.state.color} onChange={this.handleInputChange}>
                 {Object.keys(this.state.colors).map((key, i) => {
                   return (<option key={i}>{key}</option>);
                 })}
 
               </Input>  
             </Col>
-            <Col sm='3' md='3' lg='3' xl='2'>
+            <Col sm='3' md='3' lg='3' xl='3'>
               <Label>&nbsp;</Label>
-              <Input className='color' type='text'className='text-center' style={{'backgroundColor': '#'+this.state.hex}} name='hex' placeholder='Hex Color' value={this.state.hex} onChange={this.handleInputChange} />
+              <Input className='color center-input' type='text'className='text-center' style={{'backgroundColor': '#'+this.state.hex}} name='hex' placeholder='Hex Color' value={this.state.hex} onChange={this.handleInputChange} />
             </Col>
           </Row>
           <br />
 
           <Row>
-            <Col sm='3'>
-              <Label>Field Type:</Label>
-              <Input type='select' name='fieldType' value={this.state.fieldType} onChange={this.handleInputChange}>
+            <Col sm='3' md='3' lg='4'>
+              <Label>Field Type</Label>
+              <Input className='center-input' type='select' name='fieldType' value={this.state.fieldType} onChange={this.handleInputChange}>
                 <option>Choice</option>
                 <option>Text</option>
                 <option>Number</option>
                 
               </Input>  
             </Col>
-            <Col sm='2' md='3' lg='3'>
+            <Col sm='3' md='4' lg='4'>
               <br />
-              <Button size='lg' color='info' onClick={this.addRule}>Add Rule</Button>
+              <Button className='center-input' size='lg' color={this.state.selectedRule === '' ? 'success' : 'info'} onClick={this.state.selectedRule === '' ? this.newRule : this.editRule}>{this.state.selectedRule === '' ? 'New Rule' : 'Edit Rule'}</Button>
             </Col>
-            <Col sm='2' md='3' lg='3'>
+            <Col sm='3' md='4' lg='4'>
               <br />
-              <Button size='lg' color='danger' onClick={this.clearRules}>Clear All</Button>
+              <Button className='center-input' size='lg' color='danger' onClick={this.clearRules}>Clear All Rules</Button>
             </Col>
           </Row>        
-        
-
+          <br />
         </Col>
-        <Col sm='3'>
-            <Label>Rules (Click to Delete):</Label>
-            <CurrentRules rules={this.state.rules} deleteRule={this.deleteRule} />
+        <Col xs='12' sm='8' md='8' lg='3' xl='3'>
+            <Label>Rules<br />(Click to Select)</Label>
+            <CurrentRules className='center-input' rules={this.state.rules} selectRule={this.selectRule} selectedRule={this.state.selectedRule} />
+        </Col>
+        <Col>
+          <br />
+          <Button className='center-input' color='danger' size='lg' style={this.state.selectedRule === '' ? {'visibility': 'hidden'} : {}} onClick={this.deleteRule}>Delete Rule</Button>
         </Col>
         
       </Row>
       <br />
       <Row> 
-          <Input className='output' type='textarea' value={this.state.JSON} />
+          <Col>
+            <Input className='output center-input' type='textarea' value={this.state.JSON} />
+          </Col>
       </Row>
-
       </Container>
     );
   }

@@ -9,7 +9,7 @@ class CurrentRules extends Component {
             <div className='rules-container'>
                 {this.props.rules.map((ele, i) => {
                     var text = ele.operator + ' ' + ele.operand;
-                    return (<Rule key={i} index={i} hex={ele.hex} text={text} deleteRule={this.props.deleteRule} />
+                    return (<Rule key={i} index={i} hex={ele.hex} text={text} selectRule={this.props.selectRule} selectedRule={this.props.selectedRule} />
                     )
                 })}
                              
