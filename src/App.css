@@ -43,11 +43,21 @@ body {
   user-select: none;
 }
 
-
 .rules-container {
   border: 2px solid black;
   height: 150px;
   overflow: auto;
+}
+
+.remove-property {
+  color: #FF4a6Aff;
+  vertical-align: center;
+  font-size: 200%;
+
+}
+
+.remove-property:hover {
+  color: red;
 }
 
 .operator {
@@ -77,6 +87,26 @@ body {
   margin-left: auto;
   margin-right: auto;
   display: block;
+}
+
+.icon {
+  cursor: pointer;
+  user-select: none;
+}
+
+.new-property-link {
+  font-size: 19px;
+  color: #5078FF;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.new-property-link:hover {
+  color: blue;
+}
+
+.remove-text-highlighting {
+  user-select: none;
 }
 
 @keyframes App-logo-spin {

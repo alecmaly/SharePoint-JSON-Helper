@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 
 import './App.css';
-import CurrentRules from './Components/CurrentRules.jsx'
+import CurrentRules from './Components/CurrentRules.jsx';
+import BuildRule from './Components/BuildRule.jsx';
+import Property from './Components/Property.jsx';
 
 import { 
   Container,
@@ -16,6 +18,10 @@ import {
 class App extends Component {
   constructor(props) {
     super(props);
+    this.newProperty = this.newProperty.bind(this);
+    this.updateProperty = this.updateProperty.bind(this);
+    this.deleteProperty = this.deleteProperty.bind(this);
+    this.clearAllProperties = this.clearAllProperties.bind(this);
     this.newRule = this.newRule.bind(this);
     this.selectRule = this.selectRule.bind(this);
     this.editRule = this.editRule.bind(this);
@@ -41,6 +47,7 @@ class App extends Component {
           hex: 'ff6a6a'
         }
       ],
+      properties: [],
       JSON: '',
       operator: '<',
       operand: '',
@@ -56,12 +63,58 @@ class App extends Component {
         'Blue': '5078FF',
         'Purple': 'B350FF',
         'Custom': ''
-      }
+      },
+      propertyChoices: 
+        {
+            'text-align': {
+                'options': 'left,right,center,justify'
+            },
+            'border': {
+                'placeholder': '4px solid black'
+            },
+            'border-radius': {},
+            'font-weight': {
+                'options': 'bold, semibold'
+            },
+            'font-size': {}
+        }
     };
   }
 
   componentDidMount() {
     this.buildJSON();
+  }
+
+  newProperty() {
+    var arr = this.state.properties.slice();
+    arr.push({'property': 'text-align', 'value':''});
+    this.setState({
+      properties: arr
+    }, () => { this.buildJSON() });
+  }
+
+  updateProperty(index, prop, value) {
+    var arr = this.state.properties.slice();
+    arr[index] = ({'property': prop, 'value': value});
+    this.setState({
+      properties: arr
+    }, () => { this.buildJSON() });
+  }
+
+  deleteProperty(index) {
+    var arr = this.state.properties.slice();
+    var deleteProp = arr[index];
+    arr.splice(index, 1);
+    this.setState({
+      properties: arr
+    }, () => { this.buildJSON() });
+
+  }
+
+  clearAllProperties() {
+    this.setState({
+      properties: []
+    }, () => { this.buildJSON() } );
   }
 
   newRule() {
@@ -110,7 +163,7 @@ class App extends Component {
     if (this.state.selectedRule !==  '') {
       var arr = this.state.rules;
       var deleted_Hex = arr[this.state.selectedRule].hex;
-      delete arr[this.state.selectedRule];
+      arr.splice(this.state.selectedRule, 1);
       this.setState({
         rules: arr,
         operand: '',
@@ -135,9 +188,17 @@ class App extends Component {
     `{
       "elmType": "div",
       "txtContent": "@currentField",
-      "style": {
-        "background-color":`;
+      "style": {`;
     var JSON_Footer = ``;
+    var JSON_Properties = '';
+
+    // BUILD JSON HERE in forEach loop for PROPERTIES
+    this.state.properties.forEach((ele) => {
+      JSON_Properties = JSON_Properties + `
+      "` + ele.property + '": "' + ele.value + '",';
+    });
+
+    //END TEST
 
     // JSON Body
     this.state.rules.forEach((ele) => {
@@ -154,6 +215,8 @@ class App extends Component {
         },
         "#` + ele.hex + `", `
     });
+    JSON_Body = `
+    "background-color":` + JSON_Body;
 
     // JSON Footer 
     var JSON_Footer_Base = `"#FFFFFF00"`;
@@ -168,7 +231,7 @@ class App extends Component {
 
     // Set Output
     this.setState({
-      JSON: JSON_Header + JSON_Body + JSON_Footer
+      JSON: JSON_Header + JSON_Properties + JSON_Body + JSON_Footer
     });
   }
 
@@ -219,8 +282,25 @@ class App extends Component {
       <Row>
         <Col md='9' lg='6'>
           <Row>
+            {Object.keys(this.state.properties).map((key, i) => {
+              return (<Property key={i} index={i} name='' value='' propertyChoices={this.state.propertyChoices} updateProperty={this.updateProperty} deleteProperty={this.deleteProperty} />)
+            })}
+            <br />
+          </Row>
+          <Row>
+            <div className='center-input'>
+              <span className='new-property-link remove-text-highlighting' onClick={this.newProperty}>New CSS Property</span>
+            </div>
+            <div className='center-input'>
+              <span className='new-property-link remove-text-highlighting' onClick={this.clearAllProperties}>Clear All Properties</span>
+            </div>
+           
+          </Row>
+          <br />
+
+          <Row>
             <Col sm='2'>
-              <Label>Operator</Label>
+              <Label className='label remove-text-highlighting'>Operator</Label>
               <Input className='operator center-input' type='select' name='operator' value={this.state.operator} onChange={this.handleInputChange}>
                 <option>&lt;</option>
                 <option>&gt;</option>
@@ -231,11 +311,11 @@ class App extends Component {
               </Input>  
             </Col>
             <Col sm='4'>
-              <Label>Operand</Label>
+              <Label className='label remove-text-highlighting'>Operand</Label>
               <Input className='operand center-input' type='text' name='operand' placeholder='Compare to' value={this.state.operand} onChange={this.handleInputChange} />
             </Col>
             <Col sm='3'>
-              <Label>Color</Label>
+              <Label className='label remove-text-highlighting'>Color</Label>
               <Input className='color center-input' type='select' name='color' value={this.state.color} onChange={this.handleInputChange}>
                 {Object.keys(this.state.colors).map((key, i) => {
                   return (<option key={i}>{key}</option>);
@@ -244,7 +324,7 @@ class App extends Component {
               </Input>  
             </Col>
             <Col sm='3' md='3' lg='3' xl='3'>
-              <Label>&nbsp;</Label>
+              <Label className='label remove-text-highlighting'>&nbsp;</Label>
               <Input className='color center-input' type='text'className='text-center' style={{'backgroundColor': '#'+this.state.hex}} name='hex' placeholder='Hex Color' value={this.state.hex} onChange={this.handleInputChange} />
             </Col>
           </Row>
@@ -252,7 +332,7 @@ class App extends Component {
 
           <Row>
             <Col sm='3' md='3' lg='4'>
-              <Label>Field Type</Label>
+              <Label className='label remove-text-highlighting'>Field Type</Label>
               <Input className='center-input' type='select' name='fieldType' value={this.state.fieldType} onChange={this.handleInputChange}>
                 <option>Choice</option>
                 <option>Text</option>
@@ -271,8 +351,9 @@ class App extends Component {
           </Row>        
           <br />
         </Col>
+        
         <Col xs='12' sm='8' md='8' lg='4' xl='4'>
-            <Label>Rules<br />(Click to Select)</Label>
+            <Label className='label remove-text-highlighting'>Condtions<br />{this.state.selectedRule === '' ? '(Click to Select)' : '(Click to Deselect)'}</Label>
             <CurrentRules className='center-input' rules={this.state.rules} selectRule={this.selectRule} selectedRule={this.state.selectedRule} />
         </Col>
         <Col>
