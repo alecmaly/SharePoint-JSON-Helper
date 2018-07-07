@@ -324,7 +324,7 @@ class App extends Component {
               </Input>  
             </Col>
             <Col sm='3' md='3' lg='3' xl='3'>
-              <Label className='label remove-text-highlighting'>&nbsp;</Label>
+              <Label className='label remove-text-highlighting'>Hex Value <a target='_blank' href='https://www.w3schools.com/colors/colors_picker.asp'>(help)</a></Label>
               <Input className='color center-input' type='text'className='text-center' style={{'backgroundColor': '#'+this.state.hex}} name='hex' placeholder='Hex Color' value={this.state.hex} onChange={this.handleInputChange} />
             </Col>
           </Row>
