@@ -280,7 +280,7 @@ class App extends Component {
         </header>
 
       <Row>
-        <Col md='9' lg='6'>
+        <Col md='11' lg='10'>
           <Row>
             {Object.keys(this.state.properties).map((key, i) => {
               return (<Property key={i} index={i} name='' value='' propertyChoices={this.state.propertyChoices} updateProperty={this.updateProperty} deleteProperty={this.deleteProperty} />)
@@ -348,18 +348,21 @@ class App extends Component {
               <br />
               <Button className='center-input' size='lg' color='danger' onClick={this.clearRules}>Clear All Rules</Button>
             </Col>
+              <Container fluid>
+              <Col >
+                <Label className='label remove-text-highlighting'>Condtions<br />{this.state.selectedRule === '' ? '(Click to Select)' : '(Click to Deselect)'}</Label>
+                <CurrentRules className='center-input' rules={this.state.rules} selectRule={this.selectRule} selectedRule={this.state.selectedRule} />
+              </Col>
+              <Col>
+                <br />
+                <Button className='center-input' color='danger' size='lg' style={this.state.selectedRule === '' ? {'visibility': 'hidden'} : {}} onClick={this.deleteRule}>Delete Rule</Button>
+              </Col>
+            </Container>
           </Row>        
           <br />
         </Col>
         
-        <Col xs='12' sm='8' md='8' lg='4' xl='4'>
-            <Label className='label remove-text-highlighting'>Condtions<br />{this.state.selectedRule === '' ? '(Click to Select)' : '(Click to Deselect)'}</Label>
-            <CurrentRules className='center-input' rules={this.state.rules} selectRule={this.selectRule} selectedRule={this.state.selectedRule} />
-        </Col>
-        <Col>
-          <br /><br />
-          <Button className='center-input' color='danger' size='lg' style={this.state.selectedRule === '' ? {'visibility': 'hidden'} : {}} onClick={this.deleteRule}>Delete Rule</Button>
-        </Col>
+        
         
       </Row>
       <br />

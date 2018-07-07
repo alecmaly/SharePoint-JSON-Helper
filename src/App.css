@@ -109,6 +109,11 @@ body {
   user-select: none;
 }
 
+.label {
+  font-size: 13pt;
+  padding-top: .5em;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

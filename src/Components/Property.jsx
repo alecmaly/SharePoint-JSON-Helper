@@ -68,7 +68,7 @@ class Property extends Component {
             <Container fluid>
             <Row>
                 <Col>
-                    <Label className='label remove-text-highlighting'>Property</Label>
+                    <Label className='label remove-text-highlighting'>Property <a href={'https://www.google.com/search?btnI=1&q=' + this.state.property + ' site:https://www.w3schools.com/cssref/'} target='_blank'>(help)</a></Label>
                     <InputGroup>   
                         <Input className='center-input' type='text' name='property' value={this.state.property} onChange={this.handleInputChange} />
                         <InputGroupButtonDropdown addonType='append' isOpen={this.state.propertyDropdownOpen} toggle={this.togglePropertyDropdownOpen}>
