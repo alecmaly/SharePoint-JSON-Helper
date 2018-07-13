@@ -1,26 +1,44 @@
 import React, { Component } from 'react';
 
 import './App.css';
+import TopNavigation from './Components/TopNavigation.jsx';
+import BottomNavigation from './Components/BottomNavigation.jsx';
 import CurrentRules from './Components/CurrentRules.jsx';
 import BuildRule from './Components/BuildRule.jsx';
 import Property from './Components/Property.jsx';
+import Condition from './Components/Condition.jsx';
+import CopyModal from './Components/CopyModal.jsx';
+
+// polyfill for .repeat function in IE11
+import './pollyfills.js';
 
 import { 
   Container,
   Jumbotron,
+  Navbar,
+  NavbarBrand,
+  Nav,
+  NavItem,
   Row,
   Col,
   Button,
   Input,
-  Label
+  Label,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from 'reactstrap';
 
 class App extends Component {
+  
   constructor(props) {
     super(props);
+    this.navButtonClick = this.navButtonClick.bind(this);
     this.newProperty = this.newProperty.bind(this);
     this.updateProperty = this.updateProperty.bind(this);
     this.deleteProperty = this.deleteProperty.bind(this);
+    this.buildProperties = this.buildProperties.bind(this);
     this.clearAllProperties = this.clearAllProperties.bind(this);
     this.newRule = this.newRule.bind(this);
     this.selectRule = this.selectRule.bind(this);
@@ -29,43 +47,27 @@ class App extends Component {
     this.clearRules = this.clearRules.bind(this);
     this.buildJSON = this.buildJSON.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.resetForm = this.resetForm.bind(this);
+    this.toggleCopyModal = this.toggleCopyModal.bind(this);
     this.state = {
-      rules: [
-        {
-          operator: '==',
-          operand: 'Completed',
-          hex: '98fb98'
-        },
-        {
-          operator: '==',
-          operand: 'In Progress',
-          hex: 'FFFF66'
-        },
-        {
-          operator: '==',
-          operand: 'Late',
-          hex: 'ff6a6a'
-        }
-      ],
+      rules: [],
       properties: [],
       JSON: '',
-      operator: '<',
+      operator: '==',
       operand: '',
       color: '',
       hex: '98FB98',
       fieldType: 'Choice',
       selectedRule: '',
-      colors: {
-        'Green': '98FB98',
-        'Yellow': 'FFFF66',
-        'Orange': 'FFA450',
-        'Red': 'FF6A6A',
-        'Blue': '5078FF',
-        'Purple': 'B350FF',
-        'Custom': ''
-      },
+      copyModal: false,
       propertyChoices: 
         {
+            'background-color': {
+              'placeholder': '#hex -- color'
+            },
+            'font-size': {
+              'placeholder': '18px -- 150% '
+            },
             'text-align': {
                 'options': 'left,right,center,justify'
             },
@@ -74,10 +76,23 @@ class App extends Component {
             },
             'border-radius': {},
             'font-weight': {
-                'options': 'bold, semibold'
+                'options': 'bold,semibold'
             },
-            'font-size': {}
-        }
+            
+            'color': {
+              'placeholder': '#hex -- color'
+            },
+            'width': {}
+        },
+        colors: {
+            'Green': '#98FB98',
+            'Yellow': '#FFFF66',
+            'Orange': '#FFA450',
+            'Red': '#FF6A6A',
+            'Blue': '#5078FF',
+            'Purple': '#B350FF',
+            'Custom': '#'
+        }   
     };
   }
 
@@ -85,9 +100,76 @@ class App extends Component {
     this.buildJSON();
   }
 
+  buildProperties(arr) {
+    this.setState({
+      properties: []
+    }, () => { 
+      this.setState({
+        properties: arr
+      }, () => { this.buildJSON() });
+     });
+  }
+
+  navButtonClick(event) {
+    console.log(event.target.name);
+
+    switch (event.target.name) {
+      case 'copy to clipboard':
+        var copyText = document.querySelector(".output");
+        copyText.select();
+        document.execCommand("copy");
+        this.toggleCopyModal();
+        break;
+      case 'reset': 
+        this.resetForm();
+        break;
+      case 'quick add':
+        var arr = this.state.properties.slice();
+        arr.splice(0, 0, {'property': event.target.value, 'value': event.target.innerHTML});
+        this.buildProperties(arr);
+        break;
+      case 'template':
+        switch (event.target.innerHTML) {
+          case ('Completed/In Progress/Late'):
+            this.resetForm();
+            const arr = [
+              {
+                property: 'background-color',
+                value:  [
+                  {
+                    operator: '==',
+                    operand: 'Completed',
+                    value: '#98fb98'
+                  },
+                  {
+                    operator: '==',
+                    operand: 'In Progress',
+                    value: '#FFFF66'
+                  },
+                  {
+                    operator: '==',
+                    operand: 'Late',
+                    value: '#ff6a6a'
+                  }
+                ]
+              }];
+            this.buildProperties(arr);
+            break;
+
+        }
+        
+    }
+  }
+
+  resetForm() {
+    this.clearRules();
+    this.clearAllProperties();
+  }
+
+  
   newProperty() {
     var arr = this.state.properties.slice();
-    arr.push({'property': 'text-align', 'value':''});
+    arr.push({'property': 'background-color', 'value':[]});
     this.setState({
       properties: arr
     }, () => { this.buildJSON() });
@@ -96,6 +178,9 @@ class App extends Component {
   updateProperty(index, prop, value) {
     var arr = this.state.properties.slice();
     arr[index] = ({'property': prop, 'value': value});
+    
+    
+
     this.setState({
       properties: arr
     }, () => { this.buildJSON() });
@@ -106,8 +191,12 @@ class App extends Component {
     var deleteProp = arr[index];
     arr.splice(index, 1);
     this.setState({
-      properties: arr
-    }, () => { this.buildJSON() });
+      properties: []
+    }, () => { 
+      this.setState({
+        properties: arr
+      }, () => { this.buildJSON() });
+     });
 
   }
 
@@ -150,7 +239,6 @@ class App extends Component {
 
   editRule() {
     var arr = this.state.rules.slice();
-    
     arr[this.state.selectedRule].operator = this.state.operator;
     arr[this.state.selectedRule].operand = this.state.operand;
     arr[this.state.selectedRule].hex = this.state.hex;
@@ -191,43 +279,55 @@ class App extends Component {
       "style": {`;
     var JSON_Footer = ``;
     var JSON_Properties = '';
+    var JSON_Properties_Footer = '';
 
     // BUILD JSON HERE in forEach loop for PROPERTIES
-    this.state.properties.forEach((ele) => {
+    this.state.properties.forEach((ele, i) => {
       JSON_Properties = JSON_Properties + `
-      "` + ele.property + '": "' + ele.value + '",';
-    });
+      "` + ele.property + '": ' + (typeof ele.value === 'string' ? '"' + ele.value + '"' : '') ;
 
-    //END TEST
-
-    // JSON Body
-    this.state.rules.forEach((ele) => {
-      JSON_Body = JSON_Body + `
-      {
-        "operator": "?",
-        "operands": [
+      
+      (typeof ele.value === 'string' ? ele.value : 
+      
+        ele.value.forEach( (condition) => {
+          JSON_Properties = JSON_Properties + `
         {
-            "operator": "` + ele.operator + `",
-            "operands": [
-                "@currentField",
-                ` + (this.state.fieldType !== 'Number' ? `"` + ele.operand + `"` : ele.operand) + `
-            ]
-        },
-        "#` + ele.hex + `", `
-    });
-    JSON_Body = `
-    "background-color":` + JSON_Body;
+          "operator": "?",
+          "operands": [
+          {
+              "operator": "` + condition.operator + `",
+              "operands": [
+                  "@currentField",
+                  ` + (this.state.fieldType !== 'Number' ? `"` + condition.operand + `"` : condition.operand) + `
+              ]
+          },
+          "` + condition.value + `", `
+      })
+    )
 
+    // 
+    JSON_Properties = JSON_Properties + '""'.repeat( (typeof ele.value === 'object' ? 1 : 0) );
+    
+    // add closing brackets based on number of properties being evaluated
+    JSON_Properties = JSON_Properties + `
+      ]
+    }`.repeat( (typeof ele.value === 'string' ? 0 : ele.value.length) );
+
+    // add commas for all properties until the last one
+    JSON_Properties = JSON_Properties + ','.repeat( (i !== this.state.properties.length - 1 ? 1 : 0) );
+    });
+  
+    
+      
+ 
     // JSON Footer 
     var JSON_Footer_Base = `"#FFFFFF00"`;
-    this.state.rules.forEach((ele) => {
-      JSON_Footer = JSON_Footer + `
-      ]
-    }`
-    });
-    JSON_Footer = JSON_Footer_Base + JSON_Footer + 
+    var JSON_Footer_Base = ``;
+    
+
+    JSON_Footer =
     ` }
-    }`;
+    }`; 
 
     // Set Output
     this.setState({
@@ -267,9 +367,15 @@ class App extends Component {
 
   }
 
+  toggleCopyModal() {
+    this.setState({
+      copyModal: !this.state.copyModal
+    });
+  }
+
   render() {
     return (
-      <Container className="App" fluid>
+      <Container className="App">
         <header>  
           <Jumbotron className='banner' color='red'>
             <h2>SharePoint Helper</h2>
@@ -279,99 +385,47 @@ class App extends Component {
           </Jumbotron>
         </header>
 
-      <Row>
-        <Col md='11' lg='10'>
-          <Row>
-            {Object.keys(this.state.properties).map((key, i) => {
-              return (<Property key={i} index={i} name='' value='' propertyChoices={this.state.propertyChoices} updateProperty={this.updateProperty} deleteProperty={this.deleteProperty} />)
-            })}
+        <TopNavigation navButtonClick={this.navButtonClick} />
+
+        <CopyModal toggleCopyModal={this.toggleCopyModal} isOpen={this.state.copyModal} />
+
+        <Row>
+          <Col sm='12' md='12' lg='12' xl='12'>
+            <Label className='label center-input remove-text-highlighting'>Field Type</Label>
+            <Input className='field-type center-input' type='select' name='fieldType' value={this.state.fieldType} onChange={this.handleInputChange}>
+              <option>Choice</option>
+              <option>Text</option>
+              <option>Number</option>
+            </Input>  
             <br />
-          </Row>
-          <Row>
-            <div className='center-input'>
-              <span className='new-property-link remove-text-highlighting' onClick={this.newProperty}>New CSS Property</span>
-            </div>
-            <div className='center-input'>
-              <span className='new-property-link remove-text-highlighting' onClick={this.clearAllProperties}>Clear All Properties</span>
-            </div>
-           
-          </Row>
-          <br />
+          </Col>
 
-          <Row>
-            <Col sm='2'>
-              <Label className='label remove-text-highlighting'>Operator</Label>
-              <Input className='operator center-input' type='select' name='operator' value={this.state.operator} onChange={this.handleInputChange}>
-                <option>&lt;</option>
-                <option>&gt;</option>
-                <option>==</option>
-                <option>!=</option>
-                <option>&lt;=</option>
-                <option>&gt;=</option>
-              </Input>  
-            </Col>
-            <Col sm='4'>
-              <Label className='label remove-text-highlighting'>Operand</Label>
-              <Input className='operand center-input' type='text' name='operand' placeholder='Compare to' value={this.state.operand} onChange={this.handleInputChange} />
-            </Col>
-            <Col sm='3'>
-              <Label className='label remove-text-highlighting'>Color</Label>
-              <Input className='color center-input' type='select' name='color' value={this.state.color} onChange={this.handleInputChange}>
-                {Object.keys(this.state.colors).map((key, i) => {
-                  return (<option key={i}>{key}</option>);
-                })}
-
-              </Input>  
-            </Col>
-            <Col sm='3' md='3' lg='3' xl='3'>
-              <Label className='label remove-text-highlighting'>Hex Value <a target='_blank' href='https://www.w3schools.com/colors/colors_picker.asp'>(help)</a></Label>
-              <Input className='color center-input' type='text'className='text-center' style={{'backgroundColor': '#'+this.state.hex}} name='hex' placeholder='Hex Color' value={this.state.hex} onChange={this.handleInputChange} />
-            </Col>
-          </Row>
-          <br />
-
-          <Row>
-            <Col sm='3' md='3' lg='4'>
-              <Label className='label remove-text-highlighting'>Field Type</Label>
-              <Input className='center-input' type='select' name='fieldType' value={this.state.fieldType} onChange={this.handleInputChange}>
-                <option>Choice</option>
-                <option>Text</option>
-                <option>Number</option>
-                
-              </Input>  
-            </Col>
-            <Col sm='4' md='4' lg='3'>
-              <br />
-              <Button className='center-input' size='lg' color={this.state.selectedRule === '' ? 'success' : 'info'} onClick={this.state.selectedRule === '' ? this.newRule : this.editRule}>{this.state.selectedRule === '' ? 'New Rule' : 'Edit Rule'}</Button>
-            </Col>
-            <Col sm='4' md='4' lg='5'>
-              <br />
-              <Button className='center-input' size='lg' color='danger' onClick={this.clearRules}>Clear All Rules</Button>
-            </Col>
-              <Container fluid>
-              <Col >
-                <Label className='label remove-text-highlighting'>Condtions<br />{this.state.selectedRule === '' ? '(Click to Select)' : '(Click to Deselect)'}</Label>
-                <CurrentRules className='center-input' rules={this.state.rules} selectRule={this.selectRule} selectedRule={this.state.selectedRule} />
-              </Col>
-              <Col>
-                <br />
-                <Button className='center-input' color='danger' size='lg' style={this.state.selectedRule === '' ? {'visibility': 'hidden'} : {}} onClick={this.deleteRule}>Delete Rule</Button>
-              </Col>
-            </Container>
-          </Row>        
-          <br />
-        </Col>
-        
-        
-        
-      </Row>
-      <br />
-      <Row> 
+          <Col>
+            <Row>
+              {Object.keys(this.state.properties).map((key, i) => {
+                return (<Property key={i} index={i} name='' colors={this.state.colors} properties={this.state.properties} propertyChoices={this.state.propertyChoices} updateProperty={this.updateProperty} deleteProperty={this.deleteProperty} buildJSON={this.buildJSON} />)
+              })}
+            </Row>
+            <Row className='padded-row'>
+              <div className='center-input'>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={this.newProperty}>New CSS Property</Button>
+              </div>
+              <div className='center-input'>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.properties.length > 0 ? 'Visible' : 'hidden'}} onClick={this.clearAllProperties}>Clear All CSS Properties</Button>
+              </div>
+            
+            </Row>
+          </Col>
+        </Row>
+        <Row className='padded-row'> 
           <Col>
             <Input className='output center-input' type='textarea' value={this.state.JSON} />
           </Col>
-      </Row>
+        </Row>
+
+        <BottomNavigation navButtonClick={this.navButtonClick} />
       </Container>
+       
     );
   }
 }

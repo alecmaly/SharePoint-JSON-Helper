@@ -49,15 +49,16 @@ body {
   overflow: auto;
 }
 
-.remove-property {
-  color: #FF4a6Aff;
-  vertical-align: center;
-  font-size: 200%;
 
+
+.delete-property {
+  color: #ff6666;
+  font-size: 200%;
+  padding-right: .5em;
 }
 
-.remove-property:hover {
-  color: red;
+.delete-property:hover {
+  color: #cc0000;
 }
 
 .operator {
@@ -112,6 +113,47 @@ body {
 .label {
   font-size: 13pt;
   padding-top: .5em;
+}
+
+.nav-bar {
+  font-size: 16pt;
+}
+
+.Property:nth-child(odd) {
+  background-color: lightgrey;
+}
+
+.nav-button {
+  background-color: lightgrey;
+  border-radius: 10px;
+  width: 10em;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.nav-button:hover {
+  background-color: #B8B8B8;
+}
+
+.field-type {
+  max-width: 15em;
+}
+
+.padded-row {
+  padding: .75em .75em;
+}
+
+.add-remove-property-button {
+  min-width: 12em;
+}
+
+
+@media (min-width: 992px){
+  .nav-button {
+      width: 15em;
+      margin-left : 5em;
+      margin-right : 5em;
+  }
 }
 
 @keyframes App-logo-spin {
