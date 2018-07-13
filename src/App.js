@@ -40,11 +40,6 @@ class App extends Component {
     this.deleteProperty = this.deleteProperty.bind(this);
     this.buildProperties = this.buildProperties.bind(this);
     this.clearAllProperties = this.clearAllProperties.bind(this);
-    this.newRule = this.newRule.bind(this);
-    this.selectRule = this.selectRule.bind(this);
-    this.editRule = this.editRule.bind(this);
-    this.deleteRule = this.deleteRule.bind(this);
-    this.clearRules = this.clearRules.bind(this);
     this.buildJSON = this.buildJSON.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.resetForm = this.resetForm.bind(this);
@@ -162,7 +157,6 @@ class App extends Component {
   }
 
   resetForm() {
-    this.clearRules();
     this.clearAllProperties();
   }
 
@@ -206,69 +200,6 @@ class App extends Component {
     }, () => { this.buildJSON() } );
   }
 
-  newRule() {
-    var arr = this.state.rules.slice();
-    arr.push({operator: this.state.operator, operand: this.state.operand, hex: this.state.hex});
-    this.setState({
-      rules: arr
-    }, () => this.buildJSON() );    
-  }
-
-  selectRule(index) {
-    switch (index) {
-      case this.state.selectedRule:
-        //this.deleteRule();
-        this.setState({
-          selectedRule: '',
-          operand: ''
-        });
-        break;
-
-      default:
-      var rule = this.state.rules[index];
-      this.setState({
-        selectedRule: index,
-        operator: rule.operator,
-        operand: rule.operand,
-        fieldType: rule.fieldType,
-        color: 'Custom',
-        hex: rule.hex
-      });
-    } 
-  }
-
-  editRule() {
-    var arr = this.state.rules.slice();
-    arr[this.state.selectedRule].operator = this.state.operator;
-    arr[this.state.selectedRule].operand = this.state.operand;
-    arr[this.state.selectedRule].hex = this.state.hex;
-    this.setState({
-      rules: arr
-    }, () => this.buildJSON() );    
-  }
-
-  deleteRule() {
-    if (this.state.selectedRule !==  '') {
-      var arr = this.state.rules;
-      var deleted_Hex = arr[this.state.selectedRule].hex;
-      arr.splice(this.state.selectedRule, 1);
-      this.setState({
-        rules: arr,
-        operand: '',
-        color: 'Custom',
-        hex: deleted_Hex,
-        selectedRule: ''
-      }, () => this.buildJSON() );
-    }
-  }
-  
-  clearRules() {
-    this.setState({
-      rules: [],
-      operand: '',
-      selectedRule: ''
-    }, () => this.buildJSON() );
-  }
 
   buildJSON() {
     var JSON_Body = ``;

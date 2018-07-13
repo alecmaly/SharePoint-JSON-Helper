@@ -105,6 +105,7 @@ class Condition extends Component {
       }
 
     clearRules() {
+        this.props.setValue([]);
         this.setState({
             rules: [],
             operand: '',

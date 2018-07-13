@@ -126,7 +126,7 @@ body {
 .nav-button {
   background-color: lightgrey;
   border-radius: 10px;
-  width: 10em;
+  min-width: 7em;
   margin-left: 1em;
   margin-right: 1em;
 }
