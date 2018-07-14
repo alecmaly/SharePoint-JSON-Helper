@@ -24,7 +24,7 @@ class BotttomNavigation extends Component {
                         </NavItem>
                         <NavbarBrand></NavbarBrand>
                         <NavItem>
-                            <NavLink className='icon nav-button' name='reset' onClick={ this.props.navButtonClick }>Reset</NavLink>                             
+                            <NavLink className='icon nav-button reset' name='reset' onClick={ this.props.navButtonClick }>Reset</NavLink>                             
                         </NavItem>
                     </Nav>
                 </Navbar>

@@ -177,6 +177,17 @@ body {
       width: 15em;
       margin-left : 5em;
       margin-right : 5em;
+
+  }
+}
+
+@media (max-width: 500px){
+  .nav-button {
+    height: 3.75em;
+  }
+  
+  .nav-button.reset {
+    line-height: 3em;
   }
 }
 

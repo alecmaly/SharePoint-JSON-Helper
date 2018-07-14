@@ -238,7 +238,13 @@ class App extends Component {
             <h2>SharePoint Helper</h2>
             <span>Used for building conditional formatting JSON - <a target='_blank' href='https://docs.microsoft.com/en-us/sharepoint/dev/declarative-customization/column-formatting'>Microsoft Docs</a> <br />
             Note: Rules are read from top to bottom.
-            </span>     
+            </span>
+            <br />
+            <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" data-size='large' className="twitter-share-button" data-url="https://sharepoint-json-formatter.herokuapp.com" data-show-count="false">Tweet</a> 
+            &nbsp;
+            <div className="fb-share-button" data-size='large' data-href="https://sharepoint-json-formatter.herokuapp.com" data-layout="button" data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fsharepoint-json-formatter.herokuapp.com%2F&amp;src=sdkpreparse" className="fb-xfbml-parse-ignore">Share</a></div>
+            &nbsp;
+            <script type="IN/Share" data-url="https://sharepoint-json-formatter.herokuapp.com" data-format='inline' data-width='400'></script>
           </Jumbotron>
         </header>
 
