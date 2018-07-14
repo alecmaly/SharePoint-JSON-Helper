@@ -7,10 +7,15 @@ import CurrentRules from './Components/CurrentRules.jsx';
 import BuildRule from './Components/BuildRule.jsx';
 import Property from './Components/Property.jsx';
 import Condition from './Components/Condition.jsx';
-import CopyModal from './Components/CopyModal.jsx';
+import MyModal from './Components/MyModal.jsx';
+
+
 
 // polyfill for .repeat function in IE11
 import './pollyfills.js';
+
+// data
+import data from './data.js';
 
 import { 
   Container,
@@ -43,51 +48,21 @@ class App extends Component {
     this.buildJSON = this.buildJSON.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.resetForm = this.resetForm.bind(this);
-    this.toggleCopyModal = this.toggleCopyModal.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
     this.state = {
       rules: [],
       properties: [],
       JSON: '',
       operator: '==',
       operand: '',
-      color: '',
-      hex: '98FB98',
       fieldType: 'Choice',
+      textContent: '@currentField',
       selectedRule: '',
-      copyModal: false,
-      propertyChoices: 
-        {
-            'background-color': {
-              'placeholder': '#hex -- color'
-            },
-            'font-size': {
-              'placeholder': '18px -- 150% '
-            },
-            'text-align': {
-                'options': 'left,right,center,justify'
-            },
-            'border': {
-                'placeholder': '4px solid black'
-            },
-            'border-radius': {},
-            'font-weight': {
-                'options': 'bold,semibold'
-            },
-            
-            'color': {
-              'placeholder': '#hex -- color'
-            },
-            'width': {}
-        },
-        colors: {
-            'Green': '#98FB98',
-            'Yellow': '#FFFF66',
-            'Orange': '#FFA450',
-            'Red': '#FF6A6A',
-            'Blue': '#5078FF',
-            'Purple': '#B350FF',
-            'Custom': '#'
-        }   
+      modal: false,
+      modalHeader: '',
+      modalBody: '',
+      propertyChoices: data.CSSProperties,
+        colors: data.customColors
     };
   }
 
@@ -106,74 +81,55 @@ class App extends Component {
   }
 
   navButtonClick(event) {
-    console.log(event.target.name);
-
     switch (event.target.name) {
       case 'copy to clipboard':
         var copyText = document.querySelector(".output");
         copyText.select();
         document.execCommand("copy");
-        this.toggleCopyModal();
+        this.setState({
+          modalHeader: 'JSON has been copied to the clipboard',
+          modalBody: ''
+        })
+        this.toggleModal();
         break;
       case 'reset': 
         this.resetForm();
         break;
       case 'quick add':
         var arr = this.state.properties.slice();
-        arr.splice(0, 0, {'property': event.target.value, 'value': event.target.innerHTML});
+        arr.splice(0, 0, {'property': event.target.value, 'value': event.target.title});
         this.buildProperties(arr);
         break;
       case 'template':
-        switch (event.target.innerHTML) {
-          case ('Completed/In Progress/Late'):
+
+        switch (event.target.value) {
+          case 'Completed/In Progress/Late':
             this.resetForm();
-            const arr = [
-              {
-                property: 'background-color',
-                value:  [
-                  {
-                    operator: '==',
-                    operand: 'Completed',
-                    value: '#98fb98'
-                  },
-                  {
-                    operator: '==',
-                    operand: 'In Progress',
-                    value: '#FFFF66'
-                  },
-                  {
-                    operator: '==',
-                    operand: 'Late',
-                    value: '#ff6a6a'
-                  }
-                ]
-              }];
+            const arr = data.template_completedInProgressLate;
             this.buildProperties(arr);
             break;
-
         }
-        
+
     }
   }
 
   resetForm() {
+    this.setState({
+      fieldType: 'Choice',
+      textContent: '@currentField'
+    });
     this.clearAllProperties();
   }
 
-  
   newProperty() {
     var arr = this.state.properties.slice();
-    arr.push({'property': 'background-color', 'value':[]});
-    this.setState({
-      properties: arr
-    }, () => { this.buildJSON() });
+    arr.splice(0,0,{'property': 'background-color', 'value':[]});
+    this.buildProperties(arr);
   }
 
   updateProperty(index, prop, value) {
     var arr = this.state.properties.slice();
     arr[index] = ({'property': prop, 'value': value});
-    
-    
 
     this.setState({
       properties: arr
@@ -191,7 +147,6 @@ class App extends Component {
         properties: arr
       }, () => { this.buildJSON() });
      });
-
   }
 
   clearAllProperties() {
@@ -200,13 +155,12 @@ class App extends Component {
     }, () => { this.buildJSON() } );
   }
 
-
   buildJSON() {
     var JSON_Body = ``;
     var JSON_Header = 
     `{
       "elmType": "div",
-      "txtContent": "@currentField",
+      "txtContent": "` + this.state.textContent + `",
       "style": {`;
     var JSON_Footer = ``;
     var JSON_Properties = '';
@@ -215,11 +169,10 @@ class App extends Component {
     // BUILD JSON HERE in forEach loop for PROPERTIES
     this.state.properties.forEach((ele, i) => {
       JSON_Properties = JSON_Properties + `
-      "` + ele.property + '": ' + (typeof ele.value === 'string' ? '"' + ele.value + '"' : '') ;
-
+      "` + ele.property + '": ' + (typeof ele.value === 'string' ? '"' + ele.value + '"' : '');
       
       (typeof ele.value === 'string' ? ele.value : 
-      
+
         ele.value.forEach( (condition) => {
           JSON_Properties = JSON_Properties + `
         {
@@ -247,15 +200,11 @@ class App extends Component {
     // add commas for all properties until the last one
     JSON_Properties = JSON_Properties + ','.repeat( (i !== this.state.properties.length - 1 ? 1 : 0) );
     });
-  
-    
-      
- 
+
     // JSON Footer 
     var JSON_Footer_Base = `"#FFFFFF00"`;
     var JSON_Footer_Base = ``;
     
-
     JSON_Footer =
     ` }
     }`; 
@@ -266,41 +215,18 @@ class App extends Component {
     });
   }
 
-
   handleInputChange(event) {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
-
     this.setState({
       [name]: value
-    }, () => { 
-
-      // additional actions based on button clicked
-      switch(name) {
-        case 'color': 
-          if (value !== 'Custom') {
-            this.setState({
-              hex: this.state.colors[value]
-            });
-          }
-          break;
-        case 'hex':
-          this.setState({
-            color: 'Custom'
-          });
-        break;
-        case 'fieldType':
-          this.buildJSON();
-        break;
-      }
-    });
-
+    }, () => { this.buildJSON() });
   }
 
-  toggleCopyModal() {
+  toggleModal() {
     this.setState({
-      copyModal: !this.state.copyModal
+      modal: !this.state.modal
     });
   }
 
@@ -310,33 +236,33 @@ class App extends Component {
         <header>  
           <Jumbotron className='banner' color='red'>
             <h2>SharePoint Helper</h2>
-            <p>Used for building conditional formatting JSON - <a target='_blank' href='https://docs.microsoft.com/en-us/sharepoint/dev/declarative-customization/column-formatting'>Microsoft Docs</a> <br />
+            <span>Used for building conditional formatting JSON - <a target='_blank' href='https://docs.microsoft.com/en-us/sharepoint/dev/declarative-customization/column-formatting'>Microsoft Docs</a> <br />
             Note: Rules are read from top to bottom.
-            </p>
+            </span>     
           </Jumbotron>
         </header>
 
         <TopNavigation navButtonClick={this.navButtonClick} />
 
-        <CopyModal toggleCopyModal={this.toggleCopyModal} isOpen={this.state.copyModal} />
+        <MyModal toggleModal={this.toggleModal} isOpen={this.state.modal} modalHeader={this.state.modalHeader} modalBody={this.state.modalBody} />
 
         <Row>
-          <Col sm='12' md='12' lg='12' xl='12'>
+          <Col sm='6' md='6' lg='6' xl='6'>
             <Label className='label center-input remove-text-highlighting'>Field Type</Label>
             <Input className='field-type center-input' type='select' name='fieldType' value={this.state.fieldType} onChange={this.handleInputChange}>
               <option>Choice</option>
               <option>Text</option>
               <option>Number</option>
-            </Input>  
-            <br />
+            </Input>
           </Col>
-
+          <Col sm='6' md='6' lg='6' xl='6'>
+            <Label className='label center-input remove-text-highlighting'>Text Content</Label>
+            <Input className='text-content center-input' type='text' name='textContent' value={this.state.textContent} onChange={this.handleInputChange} />
+          </Col>
+        </Row>
+        <br />
+        <Row>
           <Col>
-            <Row>
-              {Object.keys(this.state.properties).map((key, i) => {
-                return (<Property key={i} index={i} name='' colors={this.state.colors} properties={this.state.properties} propertyChoices={this.state.propertyChoices} updateProperty={this.updateProperty} deleteProperty={this.deleteProperty} buildJSON={this.buildJSON} />)
-              })}
-            </Row>
             <Row className='padded-row'>
               <div className='center-input'>
                 <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={this.newProperty}>New CSS Property</Button>
@@ -346,6 +272,12 @@ class App extends Component {
               </div>
             
             </Row>
+            <Row>
+              {Object.keys(this.state.properties).map((key, i) => {
+                return (<Property key={i} index={i} name='' colors={this.state.colors} properties={this.state.properties} propertyChoices={this.state.propertyChoices} updateProperty={this.updateProperty} deleteProperty={this.deleteProperty} buildJSON={this.buildJSON} />)
+              })}
+            </Row>
+            
           </Col>
         </Row>
         <Row className='padded-row'> 

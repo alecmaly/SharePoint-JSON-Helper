@@ -27,7 +27,13 @@
 }
 
 body {
+  background: linear-gradient(to bottom right, lightblue, lightseagreen) fixed;
+}
+
+.App {
+  border-radius: 10px;
   background-color: #CBCBCB;
+  background: linear-gradient(to bottom right, #CBCBCB, lightgrey);
 }
 
 .text-center {
@@ -116,15 +122,28 @@ body {
 }
 
 .nav-bar {
-  font-size: 16pt;
+  font-size: 15pt;
+  text-decoration: none;
+  color: grey;
 }
 
-.Property:nth-child(odd) {
+
+.property:nth-child(odd) {
   background-color: lightgrey;
+}
+
+.property:nth-child(even) {
+  background-color: #B8B8B8;
+}
+
+.nav-bar-top {
+  padding-left: 1em;
+  padding-right: 1em;
+  font-size: 14pt;
 }
 
 .nav-button {
-  background-color: lightgrey;
+  background-color: #d3d3d3;
   border-radius: 10px;
   min-width: 7em;
   margin-left: 1em;
@@ -139,6 +158,10 @@ body {
   max-width: 15em;
 }
 
+.text-content {
+  max-width: 15em;
+}
+
 .padded-row {
   padding: .75em .75em;
 }
@@ -146,6 +169,7 @@ body {
 .add-remove-property-button {
   min-width: 12em;
 }
+
 
 
 @media (min-width: 992px){

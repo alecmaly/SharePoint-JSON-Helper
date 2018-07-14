@@ -65,7 +65,7 @@ class Property extends Component {
 
     handleInputChange(event) {
         const target = event.target;
-        const value = target.type === 'button' ? target.innerHTML : target.value;
+        let value = target.type === 'button' ? ( this.state.property === 'background-color' ? this.props.colors[target.innerHTML] : target.innerHTML) : target.value;
         const name = target.name;
         let resetValue = '';
 
@@ -110,7 +110,7 @@ class Property extends Component {
 
     render() { 
         return (
-            <Container className='Property' fluid>
+            <Container className='property' fluid>
             <Row>
                 <Col>
                     <Label className='label remove-text-highlighting'>Property <a href={'https://www.google.com/search?btnI=1&q=' + this.state.property + ' site:https://www.w3schools.com/cssref/'} target='_blank'>(help)</a></Label>
@@ -129,7 +129,7 @@ class Property extends Component {
                 <Col>
                     {!this.state.conditionalFlag ? 
                         <div>
-                            <Label className='label remove-text-highlighting'>Value</Label>
+                            <Label className='label remove-text-highlighting'>Value<span style={{'visibility': (this.state.property === 'background-color' || this.state.property ==='color') ? 'visible' : 'hidden' }}> (<a target='_blank' href='https://www.w3schools.com/colors/colors_picker.asp'>help</a>)</span></Label>
                             <InputGroup>   
                                 <Input className='center-input' type='text' name='value' style={ { [this.state.property] : this.state.value} } placeholder={  this.props.propertyChoices[this.state.property] !== undefined && this.props.propertyChoices[this.state.property].placeholder !== undefined ? this.props.propertyChoices[this.state.property].placeholder : '' } value={this.state.value} onChange={this.handleInputChange} />
                                 <InputGroupButtonDropdown addonType='append' isOpen={this.state.valueDropdownOpen} toggle={this.toggleValueDropdownOpen}

@@ -7,19 +7,19 @@ import {
     Button
 } from 'reactstrap';
 
-class CopyModal extends Component {
+class MyModal extends Component {
     render() {
         return (
             <div>
                 <Modal isOpen={this.props.isOpen}>
                     <ModalHeader>
-                        JSON has been copied to the clipboard
+                        {this.props.modalHeader}
                     </ModalHeader>
                     <ModalBody>
-                        
+                        {this.props.modalBody}
                     </ModalBody>
                     <ModalFooter>
-                        <Button className='center-input' type='button' color='info' onClick={this.props.toggleCopyModal}>OK</Button>
+                        <Button className='center-input' type='button' color='info' onClick={this.props.toggleModal}>OK</Button>
                     </ModalFooter>
                 </Modal>
             </div>
@@ -27,6 +27,6 @@ class CopyModal extends Component {
     }
 }
 
-export default CopyModal;
+export default MyModal;
 
 
