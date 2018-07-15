@@ -20,7 +20,7 @@ class BotttomNavigation extends Component {
                 <Navbar className='nav-bar nav-bar-bottom justify-content-center' expand color='light' fixed='bottom' light>
                     <Nav navbar>
                         <NavItem>
-                            <NavLink className='icon nav-button' name='copy to clipboard' onClick={ this.props.navButtonClick }>Copy to Clipboard</NavLink>                             
+                            <NavLink className='icon nav-button copy' name='copy to clipboard' onClick={ this.props.navButtonClick }>Copy to Clipboard</NavLink>                             
                         </NavItem>
                         <NavbarBrand></NavbarBrand>
                         <NavItem>

@@ -55,8 +55,6 @@ body {
   overflow: auto;
 }
 
-
-
 .delete-property {
   color: #ff6666;
   font-size: 200%;
@@ -125,6 +123,7 @@ body {
   font-size: 15pt;
   text-decoration: none;
   color: grey;
+  user-select: none;
 }
 
 
@@ -170,6 +169,40 @@ body {
   min-width: 12em;
 }
 
+.modal-ok-button {
+  width: 7em;
+}
+
+.fa {
+  padding: .5em;
+  font-size: 25px;
+  width: 1.75em;
+  height: 1.75em;
+  text-align: center;
+  text-decoration: none !important;
+  margin: 4px;
+  margin-bottom: 0px;
+  border-radius: 50%;
+}
+
+.fa:hover {
+    opacity: 0.7;
+}
+
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+}
+
+.fa-twitter {
+  background: #55ACEE;
+  color: white;
+}
+
+.fa-linkedin {
+  background: #007bb5;
+  color: white;
+}
 
 
 @media (min-width: 992px){
@@ -182,12 +215,8 @@ body {
 }
 
 @media (max-width: 500px){
-  .nav-button {
-    height: 3.75em;
-  }
-  
-  .nav-button.reset {
-    line-height: 3em;
+  .nav-button.copy {
+    width: 9em;
   }
 }
 
