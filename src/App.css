@@ -27,6 +27,8 @@
 }
 
 body {
+  padding-top: 5px;
+  padding-bottom: 65px;
   background: linear-gradient(to bottom right, lightblue, lightseagreen) fixed;
 }
 
@@ -167,6 +169,7 @@ body {
 
 .add-remove-property-button {
   min-width: 12em;
+  margin: 4px;
 }
 
 .modal-ok-button {
@@ -210,11 +213,15 @@ body {
       width: 15em;
       margin-left : 5em;
       margin-right : 5em;
-
   }
 }
 
 @media (max-width: 500px){
+  .nav-button {
+    margin-left: .5em;
+    margin-right: .5em;
+  }
+
   .nav-button.copy {
     width: 9em;
   }

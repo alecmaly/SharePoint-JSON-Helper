@@ -123,7 +123,7 @@ class App extends Component {
 
   newProperty() {
     var arr = this.state.properties.slice();
-    arr.splice(0,0,{'property': 'background-color', 'value':[]});
+    arr.splice(0,0,{'property': '', 'value':[]});
     this.buildProperties(arr);
   }
 

@@ -110,9 +110,15 @@ class Property extends Component {
 
     render() { 
         return (
-            <Container className='property' fluid>
+            <Container className='property' fluid>      
+            
             <Row>
-                <Col>
+                <Col sm='1'>
+                    <div className='text-center center-input'> 
+                        <span className='icon delete-property' onClick={() => this.props.deleteProperty(this.props.index)}>X</span>
+                    </div>  
+                </Col>
+                <Col sm='10'>
                     <Label className='label remove-text-highlighting'>Property <a href={'https://www.google.com/search?btnI=1&q=' + this.state.property + ' site:https://www.w3schools.com/cssref/'} target='_blank'>(help)</a></Label>
                     <InputGroup>   
                         <Input className='center-input' type='text' name='property' value={this.state.property} onChange={this.handleInputChange} />
@@ -126,7 +132,9 @@ class Property extends Component {
                         </InputGroupButtonDropdown>
                     </InputGroup>
                 </Col>
-                <Col>
+                <Col sm='1'></Col>
+                <Col sm='1'></Col>
+                <Col sm='10'>
                     {!this.state.conditionalFlag ? 
                         <div>
                             <Label className='label remove-text-highlighting'>Value<span style={{'visibility': (this.state.property === 'background-color' || this.state.property ==='color') ? 'visible' : 'hidden' }}> (<a target='_blank' href='https://www.w3schools.com/colors/colors_picker.asp'>help</a>)</span></Label>
@@ -148,12 +156,7 @@ class Property extends Component {
                             </InputGroup>  
                         </div>
                     : ''}
-                        
-                    
-                </Col>              
-                <div className='text-center center-input'> 
-                    <span className='icon delete-property' onClick={() => this.props.deleteProperty(this.props.index)}>X</span>
-                </div>
+                </Col>            
             </Row>
             <Row>
                 <div className='center-input padded-row'>
