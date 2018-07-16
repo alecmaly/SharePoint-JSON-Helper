@@ -174,11 +174,11 @@ class Condition extends Component {
                 <br />
 
                 <Row className='padded-row'>
-                    <Col>
-                        <Button className='center-input'color={this.state.selectedRule === '' ? 'success' : 'info'} onClick={this.state.selectedRule === '' ? this.newRule : this.editRule}>{this.state.selectedRule === '' ? 'New Condition' : 'Edit Condition'}</Button>
+                    <Col sm='6'>
+                        <Button className='condition-button center-input'color={this.state.selectedRule === '' ? 'success' : 'info'} onClick={this.state.selectedRule === '' ? this.newRule : this.editRule}>{this.state.selectedRule === '' ? 'New Condition' : 'Edit Condition'}</Button>
                     </Col>
-                    <Col>
-                        <Button className='center-input' color='danger' onClick={this.clearRules}>Clear All Conditions</Button>
+                    <Col sm='6'>
+                        <Button className='condition-button center-input' color='danger' onClick={this.clearRules}>Clear All Conditions</Button>
                     </Col>
                     <Container fluid>
                         <Row>
@@ -189,7 +189,7 @@ class Condition extends Component {
                         </Row>
                         <Row>
                             <Col className='padded-row'>
-                                <Button className='center-input' color='danger' style={this.state.selectedRule === '' ? {'visibility': 'hidden'} : {}} onClick={this.deleteRule}>Delete Condition</Button>
+                                <Button className='condition-button center-input' color='danger' style={this.state.selectedRule === '' ? {'visibility': 'hidden'} : {}} onClick={this.deleteRule}>Delete Condition</Button>
                             </Col>
                         </Row>
                     </Container>

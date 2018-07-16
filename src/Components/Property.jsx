@@ -65,11 +65,12 @@ class Property extends Component {
 
     handleInputChange(event) {
         const target = event.target;
-        let value = target.type === 'button' ? ( this.state.property === 'background-color' ? this.props.colors[target.innerHTML] : target.innerHTML) : target.value;
         const name = target.name;
+        
         let resetValue = '';
 
         if (name === 'property') {
+            let value = target.type === 'button' ? target.innerHTML : target.value;
             resetValue = [];
             this.setState({
                 [name]: value,
@@ -77,6 +78,7 @@ class Property extends Component {
               }, () => { this.props.updateProperty(this.props.index, value, '') }) 
               
         } else {
+            let value = target.type === 'button' ? ( this.state.property === 'background-color' ? this.props.colors[target.innerHTML] : target.innerHTML) : target.value;
             resetValue = value;
             this.setState({
                 [name]: value,
@@ -113,12 +115,12 @@ class Property extends Component {
             <Container className='property' fluid>      
             
             <Row>
-                <Col sm='1'>
+                <Col sm='12' md='1'>
                     <div className='text-center center-input'> 
                         <span className='icon delete-property' onClick={() => this.props.deleteProperty(this.props.index)}>X</span>
                     </div>  
                 </Col>
-                <Col sm='10'>
+                <Col sm='12' md='5'>
                     <Label className='label remove-text-highlighting'>Property <a href={'https://www.google.com/search?btnI=1&q=' + this.state.property + ' site:https://www.w3schools.com/cssref/'} target='_blank'>(help)</a></Label>
                     <InputGroup>   
                         <Input className='center-input' type='text' name='property' value={this.state.property} onChange={this.handleInputChange} />
@@ -132,9 +134,8 @@ class Property extends Component {
                         </InputGroupButtonDropdown>
                     </InputGroup>
                 </Col>
-                <Col sm='1'></Col>
-                <Col sm='1'></Col>
-                <Col sm='10'>
+
+                <Col sm='12' md='5'>
                     {!this.state.conditionalFlag ? 
                         <div>
                             <Label className='label remove-text-highlighting'>Value<span style={{'visibility': (this.state.property === 'background-color' || this.state.property ==='color') ? 'visible' : 'hidden' }}> (<a target='_blank' href='https://www.w3schools.com/colors/colors_picker.asp'>help</a>)</span></Label>

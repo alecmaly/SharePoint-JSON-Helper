@@ -52,6 +52,6 @@ export default {
               value: '#ff6a6a'
             }
           ]
-        }]   
+        }] 
     
 }

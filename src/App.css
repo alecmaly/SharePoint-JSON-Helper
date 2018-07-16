@@ -108,6 +108,12 @@ body {
   cursor: pointer;
 }
 
+.help-link {
+  font-size: 19px;
+  color: #5078FF;
+  cursor: pointer;
+}
+
 .new-property-link:hover {
   color: blue;
 }
@@ -170,6 +176,13 @@ body {
 .add-remove-property-button {
   min-width: 12em;
   margin: 4px;
+}
+
+.condition-button {
+  margin: 4px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block; 
 }
 
 .modal-ok-button {

@@ -49,6 +49,7 @@ class App extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.resetForm = this.resetForm.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
+    this.displayModal = this.displayModal.bind(this);
     this.state = {
       rules: [],
       properties: [],
@@ -230,6 +231,30 @@ class App extends Component {
     });
   }
 
+  displayModal(event) {
+    switch(event.target.attributes.value.value) {
+      case 'text content help':
+        this.setState({
+          modalHeader: 'Text Context Help',
+          modalBody: `
+          <b>@currentField</b> - refers to text in current field. <br>
+          <b>@currentField.title</b> - Person fields are represented in the system as objects, and a person’s display name is contained within that object’s title property <br>
+          <b>@currentField.lookupValue</b> -  Lookup fields are also represented as objects; the display text is stored in the lookupValue property <br>
+          <b>@now</b> - current date/time <br>
+          <b>@me</b> - current user's email <br>
+          <b>[$FieldName]</b> - refers to value in field on same row <br>
+          <b>[$PeoplePicker.email]</b> - refers to email of the person in a people picker field 
+          <br><br>
+
+          Note: If you have spaces in the field name, those are defined as _x0020_. For example, a field named "Due Date" should be referenced as $Due_x0020_Date.
+          `
+        })
+
+        this.toggleModal();
+        break;
+    }
+  }
+
   render() {
     return (
       <Container className="App">
@@ -269,7 +294,7 @@ class App extends Component {
             </Input>
           </Col>
           <Col sm='6' md='6' lg='6' xl='6'>
-            <Label className='label center-input remove-text-highlighting'>Text Content</Label>
+            <Label className='label center-input remove-text-highlighting'>Text Content (<span class='help-link' value="text content help" onClick={this.displayModal}>help</span>)</Label>
             <Input className='text-content center-input' type='text' name='textContent' value={this.state.textContent} onChange={this.handleInputChange} />
           </Col>
         </Row>

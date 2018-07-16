@@ -15,9 +15,7 @@ class MyModal extends Component {
                     <ModalHeader>
                         {this.props.modalHeader}
                     </ModalHeader>
-                    <ModalBody>
-                        {this.props.modalBody}
-                    </ModalBody>
+                    <ModalBody dangerouslySetInnerHTML={ { __html: this.props.modalBody } } />
                     <ModalFooter>
                         <Button className='modal-ok-button center-input' type='button' color='info' onClick={this.props.toggleModal}>OK</Button>
                     </ModalFooter>
