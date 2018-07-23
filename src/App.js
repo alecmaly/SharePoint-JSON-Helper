@@ -4,8 +4,8 @@ import './App.css';
 import TopNavigation from './Components/TopNavigation.jsx';
 import BottomNavigation from './Components/BottomNavigation.jsx';
 import CurrentRules from './Components/CurrentRules.jsx';
-import BuildRule from './Components/BuildRule.jsx';
 import Property from './Components/Property.jsx';
+import Attribute from './Components/Attribute.jsx';
 import Condition from './Components/Condition.jsx';
 import MyModal from './Components/MyModal.jsx';
 
@@ -40,11 +40,18 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.navButtonClick = this.navButtonClick.bind(this);
+    this.newAttribute = this.newAttribute.bind(this);
+    this.updateAttribute = this.updateAttribute.bind(this);
+    this.deleteAttribute = this.deleteAttribute.bind(this);
+    this.buildAttributes = this.buildAttributes.bind(this);
+    this.clearAllAttributes = this.clearAllAttributes.bind(this);
     this.newProperty = this.newProperty.bind(this);
     this.updateProperty = this.updateProperty.bind(this);
     this.deleteProperty = this.deleteProperty.bind(this);
     this.buildProperties = this.buildProperties.bind(this);
     this.clearAllProperties = this.clearAllProperties.bind(this);
+    this.parseString = this.parseString.bind(this);
+    this.buildValue = this.buildValue.bind(this);
     this.buildJSON = this.buildJSON.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.resetForm = this.resetForm.bind(this);
@@ -52,6 +59,7 @@ class App extends Component {
     this.displayModal = this.displayModal.bind(this);
     this.state = {
       rules: [],
+      attributes: [],
       properties: [],
       JSON: '',
       operator: '==',
@@ -62,8 +70,9 @@ class App extends Component {
       modal: false,
       modalHeader: '',
       modalBody: '',
+      attributeChoices: data.Attributes,
       propertyChoices: data.CSSProperties,
-        colors: data.customColors
+      colors: data.customColors
     };
   }
 
@@ -71,6 +80,57 @@ class App extends Component {
     this.buildJSON();
   }
 
+
+  newAttribute() {
+    var arr = this.state.attributes.slice();
+    console.log(arr);
+    arr.splice(0,0, {'attribute': '', 'value':[]});
+    console.log(arr);
+    this.buildAttributes(arr);
+  }
+  
+  buildAttributes(arr) {
+    this.setState({
+      attributes: []
+    }, () => { 
+      this.setState({
+        attributes: arr
+      }, () => { this.buildJSON() });
+     });
+  }
+
+  updateAttribute(index, prop, value) {
+    var arr = this.state.attributes.slice();
+    arr[index] = ({'attribute': prop, 'value': value});
+
+    this.setState({
+      attributes: arr
+    }, () => { this.buildJSON() });
+  }
+
+  deleteAttribute(index) {
+    var arr = this.state.attributes.slice();
+    var deleteAtt = arr[index];
+    arr.splice(index, 1);
+    this.setState({
+      attributes: []
+    }, () => { 
+      this.setState({
+        attributes: arr
+      }, () => { this.buildJSON() });
+     });
+  }
+
+  clearAllAttributes() {
+    this.setState({
+      attributes: []
+    }, () => { this.buildJSON() } );
+  }
+
+  
+
+  // This function builds properties from arr input. 
+  // Needed to build this way for state to reset properly.
   buildProperties(arr) {
     this.setState({
       properties: []
@@ -82,6 +142,7 @@ class App extends Component {
   }
 
   navButtonClick(event) {
+    let arr = [];
     switch (event.target.name) {
       case 'copy to clipboard':
         var copyText = document.querySelector(".output");
@@ -96,18 +157,30 @@ class App extends Component {
       case 'reset': 
         this.resetForm();
         break;
-      case 'quick add':
-        var arr = this.state.properties.slice();
+      case 'attribute':
+         arr = this.state.attributes.slice();
+        arr.splice(0, 0, {'attribute': event.target.value, 'value': event.target.title});
+        this.buildAttributes(arr);
+        break;
+      case 'property':
+        arr = this.state.properties.slice();
         arr.splice(0, 0, {'property': event.target.value, 'value': event.target.title});
         this.buildProperties(arr);
         break;
+        
       case 'template':
-
         switch (event.target.value) {
           case 'Completed/In Progress/Late':
             this.resetForm();
-            const arr = data.template_completedInProgressLate;
+            arr = data.template_completedInProgressLate;
             this.buildProperties(arr);
+            break;
+          case 'Data Bars':
+            this.resetForm();
+            arr = data.template_dataBars;
+            
+            this.buildProperties(arr.properties);
+            this.buildAttributes(arr.attributes);
             break;
         }
 
@@ -120,6 +193,7 @@ class App extends Component {
       textContent: '@currentField'
     });
     this.clearAllProperties();
+    this.clearAllAttributes();
   }
 
   newProperty() {
@@ -156,63 +230,121 @@ class App extends Component {
     }, () => { this.buildJSON() } );
   }
 
-  buildJSON() {
-    var JSON_Body = ``;
-    var JSON_Header = 
-    `{
-      "elmType": "div",
-      "txtContent": "` + this.state.textContent + `",
-      "style": {`;
-    var JSON_Footer = ``;
-    var JSON_Properties = '';
-    var JSON_Properties_Footer = '';
+  parseString(str, indent) {
+    let value = '"' + str + '"';
+    if (str.toString().includes('++')) {
+      value = '\t'.repeat(++indent) + '"operator": "+",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
+      indent++;
+      str.split('++').forEach((val, i) => { value = value + (this.state.fieldType !== 'Number' ? '\t'.repeat(indent) + `"` + val + `"` : val) + ',\n' });
+      indent--;
+      value = '{\n' + value.slice(0,-2) + (str.toString().split('++').length === 1 ? ',\n' + '\t'.repeat(indent + 1) + '""' : '') + '\n' + '\t'.repeat(indent) +  ']\n}';
+    } 
+    return value;
+  }
 
-    // BUILD JSON HERE in forEach loop for PROPERTIES
-    this.state.properties.forEach((ele, i) => {
-      JSON_Properties = JSON_Properties + `
-      "` + ele.property + '": ' + (typeof ele.value === 'string' ? '"' + ele.value + '"' : '');
+  buildValue(type, obj, indent) {
+    let output = '';
+
+    switch (type) {
+      case 'property':
+        output = '\t'.repeat(indent)  + '"style": {';
+        break;
+      case 'attribute':
+        output = '\t'.repeat(indent) + '"attributes": {';
+        break;
+    }
+
+    obj.forEach((ele, i) => {
+      // NEED TO CHECK IF RULES/CONDITIONS ARE APPLIED OR NOT (FIX HERE)
+      // craft value
+      let value = '';
       
-      (typeof ele.value === 'string' ? ele.value : 
-
+      if (typeof ele.value === 'string') {
+        value = this.parseString(ele.value, indent);
+      }
+      // craft value
+      output = output + `
+      "` + ele[type] + '": ' + value;
+      
+      if (typeof ele.value === 'object') {   
+        // false
         ele.value.forEach( (condition) => {
-          JSON_Properties = JSON_Properties + `
+          value = '"' + condition.value + '"';
+          if (condition.value.toString().includes('++')) {
+            value = '\t'.repeat(++indent) + '"operator": "+",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
+            indent++;
+            condition.value.split('++').forEach((val, i) => { value = value + (this.state.fieldType !== 'Number' ? '\t'.repeat(indent) + `"` + val + `"` : val) + ',\n' });
+            indent--;
+            value = '{\n' + value.slice(0,-2) + (condition.value.toString().split('++').length === 1 ? ',\n' + '\t'.repeat(indent + 1) + '""' : '') + '\n' + '\t'.repeat(indent) +  ']\n}';
+          } 
+
+          // ADD VALUE CREATION HERE FOR EACH RULE
+          output = output + `\n
         {
           "operator": "?",
           "operands": [
           {
               "operator": "` + condition.operator + `",
               "operands": [
-                  "@currentField",
-                  ` + (this.state.fieldType !== 'Number' ? `"` + condition.operand + `"` : condition.operand) + `
+                  ` + (this.state.fieldType !== 'Number' ? `"` + condition.operand + `"` : condition.operand) + `,
+                  ` + (this.state.fieldType !== 'Number' ? `"` + condition.operand2 + `"` : condition.operand2) + `
               ]
           },
-          "` + condition.value + `", `
-      })
-    )
+          ` + value + `, `
+        })
+        // end false
+      }
+      
+      // 
+      output = output + '""'.repeat( (typeof ele.value === 'object' ? 1 : 0) );
+      
+      // add closing brackets based on number of properties being evaluated
+      output = output + `\n\t]
+      }`.repeat( (typeof ele.value === 'string' ? 0 : ele.value.length) );
 
-    // 
-    JSON_Properties = JSON_Properties + '""'.repeat( (typeof ele.value === 'object' ? 1 : 0) );
-    
-    // add closing brackets based on number of properties being evaluated
-    JSON_Properties = JSON_Properties + `
-      ]
-    }`.repeat( (typeof ele.value === 'string' ? 0 : ele.value.length) );
-
-    // add commas for all properties until the last one
-    JSON_Properties = JSON_Properties + ','.repeat( (i !== this.state.properties.length - 1 ? 1 : 0) );
+      // add commas for all properties until the last one
+      output = output + ','.repeat( (i !== obj.length - 1 ? 1 : 0) );
     });
 
-    // JSON Footer 
-    var JSON_Footer_Base = `"#FFFFFF00"`;
-    var JSON_Footer_Base = ``;
+    output = output + '\n' + '\t'.repeat(indent) + '}';
+
+    return output;
+  }  
+
+
+  buildJSON() {
+    let indent = 0;
+    var JSON_Body = ``;
+    var JSON_Header = 
+    `{
+      "elmType": "div",
+      "txtContent": ` + this.parseString(this.state.textContent, indent) + `,
+      `;
+    var JSON_Footer = ``;
+    var JSON_Properties = '';
+    var JSON_Properties_Footer = '';
+
+    var JSON_Attributes = '';
+
     
-    JSON_Footer =
-    ` }
-    }`; 
+    // BUILD JSON HERE in forEach loop for ATTRIBUTES
+    indent++;
+    
+    JSON_Properties = JSON_Properties + this.buildValue('property', this.state.properties, indent);
+    JSON_Attributes = JSON_Attributes + this.buildValue('attribute', this.state.attributes, indent);
+    
+
+   
+    
+    // JSON Footer 
+    JSON_Footer = `\n}`; 
+
+    // build body of properties and attributes
+    JSON_Body = JSON_Properties + ",\n" + JSON_Attributes;
 
     // Set Output
     this.setState({
-      JSON: JSON_Header + JSON_Properties + JSON_Body + JSON_Footer
+      JSON: JSON_Header + JSON_Body + JSON_Footer
     });
   }
 
@@ -232,12 +364,13 @@ class App extends Component {
   }
 
   displayModal(event) {
+    console.log(event.target);
     switch(event.target.attributes.value.value) {
       case 'text content help':
         this.setState({
           modalHeader: 'Text Context Help',
           modalBody: `
-          <b>@currentField</b> - refers to text in current field. <br>
+          <b onClick={this.props.newProperty}>@currentField</b> - refers to text in current field. <br>
           <b>@currentField.title</b> - Person fields are represented in the system as objects, and a person’s display name is contained within that object’s title property <br>
           <b>@currentField.lookupValue</b> -  Lookup fields are also represented as objects; the display text is stored in the lookupValue property <br>
           <b>@now</b> - current date/time <br>
@@ -299,6 +432,29 @@ class App extends Component {
           </Col>
         </Row>
         <br />
+
+        {/* Attributes */}
+        <Row>
+          <Col>
+            <Row className='padded-row'>
+              <div className='center-input'>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={this.newAttribute}>New Attribute</Button>
+              </div>
+              <div className='center-input'>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.attributes.length > 0 ? 'Visible' : 'hidden'}} onClick={this.clearAllAttributes}>Clear All Attributes</Button>
+              </div>
+            
+            </Row>
+            <Row>
+              {Object.keys(this.state.attributes).map((key, i) => {
+                return (<Attribute key={i} index={i} name='' colors={this.state.colors} attributes={this.state.attributes} attributeChoices={this.state.attributeChoices} updateAttribute={this.updateAttribute} deleteAttribute={this.deleteAttribute} buildJSON={this.buildJSON} displayModal={this.displayModal} />)
+              })}
+            </Row>
+            
+          </Col>
+        </Row>
+
+        {/* Properties */}
         <Row>
           <Col>
             <Row className='padded-row'>
@@ -312,12 +468,13 @@ class App extends Component {
             </Row>
             <Row>
               {Object.keys(this.state.properties).map((key, i) => {
-                return (<Property key={i} index={i} name='' colors={this.state.colors} properties={this.state.properties} propertyChoices={this.state.propertyChoices} updateProperty={this.updateProperty} deleteProperty={this.deleteProperty} buildJSON={this.buildJSON} />)
+                return (<Property key={i} index={i} name='' colors={this.state.colors} properties={this.state.properties} propertyChoices={this.state.propertyChoices} updateProperty={this.updateProperty} deleteProperty={this.deleteProperty} buildJSON={this.buildJSON} displayModal={this.displayModal} />)
               })}
             </Row>
             
           </Col>
         </Row>
+
         <Row className='padded-row'> 
           <Col>
             <Input className='output center-input' type='textarea' value={this.state.JSON} />

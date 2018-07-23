@@ -39,14 +39,17 @@ class TopNavigation extends Component {
                                 Quick Add
                             </DropdownToggle>
                                 <DropdownMenu right>
-                                    <DropdownItem name='quick add' value='background-color' title='' onClick={this.props.navButtonClick}>
+                                    <DropdownItem name='property' value='background-color' title='' onClick={this.props.navButtonClick}>
                                         Background Color
                                     </DropdownItem>
-                                    <DropdownItem name='quick add' value='font-weight' title='bold' onClick={this.props.navButtonClick}>
-                                        Bold
+                                    <DropdownItem name='property' value='font-weight' title='bold' onClick={this.props.navButtonClick}>
+                                        Bold Font
                                     </DropdownItem>
-                                    <DropdownItem name='quick add' value='font-size' title='' onClick={this.props.navButtonClick}>
+                                    <DropdownItem name='property' value='font-size' title='' onClick={this.props.navButtonClick}>
                                         Font Size
+                                    </DropdownItem>
+                                    <DropdownItem name='attribute' value='href' title='' onClick={this.props.navButtonClick}>
+                                        Hyperlink
                                     </DropdownItem>
                                 </DropdownMenu>
                         </UncontrolledDropdown>
@@ -57,6 +60,9 @@ class TopNavigation extends Component {
                                 <DropdownMenu right>
                                     <DropdownItem name='template' value='Completed/In Progress/Late' onClick={this.props.navButtonClick}>
                                         Completed/In Progress/Late
+                                    </DropdownItem>
+                                    <DropdownItem name='template' value='Data Bars' onClick={this.props.navButtonClick}>
+                                        Data Bars
                                     </DropdownItem>
                                 </DropdownMenu>
                         </UncontrolledDropdown>

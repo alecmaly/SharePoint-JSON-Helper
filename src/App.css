@@ -108,6 +108,10 @@ body {
   cursor: pointer;
 }
 
+.wrap-value {
+  height: 2.5em;
+}
+
 .help-link {
   font-size: 19px;
   color: #5078FF;

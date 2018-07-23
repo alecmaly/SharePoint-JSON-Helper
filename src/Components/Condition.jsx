@@ -27,7 +27,8 @@ class Condition extends Component {
         this.toggleValueDropdownOpen = this.toggleValueDropdownOpen.bind(this);
         this.state = {
             operator: '==',
-            operand: '',
+            operand: '@currentField',
+            operand2: '',
             value: '',
             selectedRule: '',
             rules: this.props.rules,
@@ -46,11 +47,10 @@ class Condition extends Component {
     newRule() {
         var arr = this.state.rules.slice();
         arr.length > 0 ? '' : arr = [];
-        arr.push({operator: this.state.operator, operand: this.state.operand, value: this.state.value});
+        arr.push({operator: this.state.operator, operand: this.state.operand, operand2: this.state.operand2, value: this.state.value});
         this.setState({
           rules: arr,
-          value: '',
-          operand: ''
+          value: ''
         }, () => { this.props.updateProperty(this.props.index, this.props.property, this.state.rules) });    
         this.props.setValue(arr);
     }
@@ -70,6 +70,7 @@ class Condition extends Component {
                 selectedRule: index,
                 operator: rule.operator,
                 operand: rule.operand,
+                operand2: rule.operand2,
                 value: rule.value
             });
             
@@ -81,6 +82,7 @@ class Condition extends Component {
         var arr = this.state.rules.slice();
         arr[this.state.selectedRule].operator = this.state.operator;
         arr[this.state.selectedRule].operand = this.state.operand;
+        arr[this.state.selectedRule].operand2 = this.state.operand2;
         arr[this.state.selectedRule].value = this.state.value;
         this.props.setValue(arr);
         this.setState({
@@ -97,7 +99,8 @@ class Condition extends Component {
           this.props.setValue(arr);
           this.setState({
             rules: arr,
-            operand: '',
+            operand: '@currentField',
+            operand2: '',
             value: deleted_Value,
             selectedRule: ''
           }, () => { this.props.updateProperty(this.props.index, this.props.property, this.state.rules) });
@@ -108,7 +111,8 @@ class Condition extends Component {
         this.props.setValue([]);
         this.setState({
             rules: [],
-            operand: '',
+            operand: '@currentField',
+            operand2: '',
             selectedRule: ''
         }, () => { this.props.updateProperty(this.props.index, this.props.property, this.state.rules) });
     }
@@ -134,6 +138,10 @@ class Condition extends Component {
         return (
             <Col>
                 <Row>
+                    <Col sm='3'>
+                        <Label className='label remove-text-highlighting'>Operand (<span class='help-link' value="text content help" onClick={this.props.displayModal}>help</span>)</Label>
+                        <Input className='operand center-input' type='text' name='operand' placeholder='Compare to' value={this.state.operand} onChange={this.handleInputChange} />
+                    </Col>
                     <Col sm='2'>
                         <Label className='label remove-text-highlighting'>Operator</Label>
                         <Input className='operator center-input' type='select' name='operator' value={this.state.operator} onChange={this.handleInputChange}>
@@ -145,11 +153,11 @@ class Condition extends Component {
                             <option>&gt;=</option>
                         </Input>  
                     </Col>
-                    <Col sm='4'>
-                        <Label className='label remove-text-highlighting'>Operand</Label>
-                        <Input className='operand center-input' type='text' name='operand' placeholder='Compare to' value={this.state.operand} onChange={this.handleInputChange} />
+                    <Col sm='3'>
+                        <Label className='label remove-text-highlighting'>Operand2 (<span class='help-link' value="text content help" onClick={this.props.displayModal}>help</span>)</Label>
+                        <Input className='operand center-input' type='text' name='operand2' placeholder='Compare to' value={this.state.operand2} onChange={this.handleInputChange} />
                     </Col>
-                    <Col>
+                    <Col sm='4'>
                         <Label className='label remove-text-highlighting'>Value</Label>
                         <InputGroup>   
                             <Input className='center-input' type='text' name='value' style={ { [this.props.property] : this.state.value} } 
