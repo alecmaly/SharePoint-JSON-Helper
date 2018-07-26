@@ -10,7 +10,8 @@ export default {
         ,
         'class': {
             'options': 'sp-field-customFormatBackground,sp-field-severity--good,sp-field-severity--low,sp-field-severity--warning,sp-field-severity--blocked,sp-field-dataBars,sp-field-trending--up,sp-field-trending--down,sp-field-quickAction'
-        }
+        },
+        'iconName': {}
     },
     CSSProperties: {
         'background-color': {
@@ -37,6 +38,14 @@ export default {
         'max-height': {},
         'overflow': {
             'options': 'scroll,hidden,auto,visible'
+        }
+    },
+    customRowActions: {
+        'action': {
+            'options': 'executeFlow,share,defaultClick'
+        },
+        'actionParams': {
+            'options': '{\\"id\\": \\"FLOW_ID\\"}'
         }
     },
     customColors: {

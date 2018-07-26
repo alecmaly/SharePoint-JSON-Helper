@@ -12,7 +12,7 @@ class MyModal extends Component {
         return (
             <div>
                 <Modal isOpen={this.props.isOpen}>
-                    <ModalHeader>
+                    <ModalHeader >
                         {this.props.modalHeader}
                     </ModalHeader>
                     <ModalBody dangerouslySetInnerHTML={ { __html: this.props.modalBody } } />

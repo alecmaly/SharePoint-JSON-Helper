@@ -33,6 +33,7 @@ class TopNavigation extends Component {
         return (
             <div>
                 <Navbar className='nav-bar nav-bar-top' expand color='light' light>
+                    {/* Left Nav Buttons */}
                     <Nav className='mr-auto' navbar>
                         <UncontrolledDropdown nav>
                             <DropdownToggle nav caret>
@@ -67,18 +68,24 @@ class TopNavigation extends Component {
                                 </DropdownMenu>
                         </UncontrolledDropdown>
                     </Nav>
-                    
-                    <NavbarToggler className='mr-auto' onClick={this.toggleNavbar} />
-                    <Collapse isOpen={this.state.isOpen} navbar>
-                        <Nav className='ml-auto' navbar> {/*
-                            <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" data-size='large' className="twitter-share-button" data-url="https://sharepoint-json-formatter.herokuapp.com" data-show-count="false">Tweet</a> 
-                            &nbsp;
-                            <div className="fb-share-button" data-size='large' data-href="https://sharepoint-json-formatter.herokuapp.com" data-layout="button" data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fsharepoint-json-formatter.herokuapp.com%2F&amp;src=sdkpreparse" className="fb-xfbml-parse-ignore">Share</a></div>
-                            &nbsp;
-                            <script type="IN/Share" data-url="https://sharepoint-json-formatter.herokuapp.com" data-format='inline' data-width='400'></script>
-                        */}
-                        </Nav>
-                    </Collapse>
+
+                    {/* Right Nav Buttons */}
+                    <Nav className='ml-auto' navbar>
+                        <UncontrolledDropdown nav>
+                            <DropdownToggle nav caret>
+                                Help
+                            </DropdownToggle>
+                                <DropdownMenu right>
+                                    <DropdownItem target='_blank' href='https://jsonlint.com'>
+                                       JSON Lint    
+                                    </DropdownItem>
+                                    <DropdownItem target='_blank' href='https://www.youtube.com'>
+                                        YouTube Tutorial
+                                    </DropdownItem>
+                                </DropdownMenu>
+                        </UncontrolledDropdown>
+                    </Nav>
+
                     
                 </Navbar>
 

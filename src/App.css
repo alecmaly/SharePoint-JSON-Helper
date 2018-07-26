@@ -224,6 +224,37 @@ body {
   color: white;
 }
 
+.side-info {
+  background-color: lightblue;
+  width: 1.5em;
+  min-height: 6em;
+  position: relative;
+}
+
+.side-info span {
+  /* Change to flexbox later */
+  top: 50%;
+  left: .75em;
+  transform-origin: left;
+  position: absolute;
+  text-overflow: hidden;
+  white-space: nowrap;
+  transform: rotate(-90deg) translate(-2em, 0);
+}
+
+.properties-color {
+  background-color: lightblue;
+}
+
+.attributes-color {
+  background-color: lightcoral;
+}
+
+
+.customRowActions-color {
+  background-color: lightgreen; 
+}
+
 
 @media (min-width: 992px){
   .nav-button {

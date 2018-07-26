@@ -15,9 +15,7 @@ class CurrentRules extends Component {
             </div> 
         )
     }
-
 }
 
 
-``
 export default CurrentRules;

@@ -6,6 +6,7 @@ import BottomNavigation from './Components/BottomNavigation.jsx';
 import CurrentRules from './Components/CurrentRules.jsx';
 import Property from './Components/Property.jsx';
 import Attribute from './Components/Attribute.jsx';
+import CustomRowAction from './Components/CustomRowAction.jsx';
 import Condition from './Components/Condition.jsx';
 import MyModal from './Components/MyModal.jsx';
 
@@ -40,6 +41,11 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.navButtonClick = this.navButtonClick.bind(this);
+    this.newKey = this.newKey.bind(this);
+    this.updateKey = this.updateKey.bind(this);
+    this.buildKey = this.buildKey.bind(this);
+    this.deleteKey = this.deleteKey.bind(this);
+    this.clearAllKeys = this.clearAllKeys.bind(this);
     this.newAttribute = this.newAttribute.bind(this);
     this.updateAttribute = this.updateAttribute.bind(this);
     this.deleteAttribute = this.deleteAttribute.bind(this);
@@ -57,21 +63,27 @@ class App extends Component {
     this.resetForm = this.resetForm.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.displayModal = this.displayModal.bind(this);
+
+    //temp
+    this.updateCRA = this.updateCRA.bind(this);
+    // end temp
+
+
     this.state = {
       rules: [],
       attributes: [],
       properties: [],
+      customRowActions: [],
       JSON: '',
-      operator: '==',
-      operand: '',
+      elmType: 'div',
       fieldType: 'Choice',
       textContent: '@currentField',
-      selectedRule: '',
       modal: false,
       modalHeader: '',
       modalBody: '',
       attributeChoices: data.Attributes,
       propertyChoices: data.CSSProperties,
+      customRowActionChoices: data.customRowActions,
       colors: data.customColors
     };
   }
@@ -80,12 +92,58 @@ class App extends Component {
     this.buildJSON();
   }
 
+  newKey(key) {
+    var arr = this.state[key].slice();
+
+    arr.splice(0,0, {[key]: '', 'value':[]});
+    this.buildKey(key, arr);
+  }
+
+  updateKey(key, index, prop, value) {
+    var arr = this.state[key].slice();
+    arr[index] = ({[key]: prop, 'value': value});
+
+    this.setState({
+      [key]: arr
+    }, () => { this.buildJSON() });
+  }
+
+  clearAllKeys(key) {
+    this.setState({
+      [key]: []
+    }, () => { this.buildJSON() } );
+  }
+
+  updateCRA(index, prop, value) {
+    this.updateKey('customRowActions', index, prop, value);
+  }
+
+  buildKey(key, arr) {
+    this.setState({
+      [key]: []
+    }, () => {
+      this.setState({
+        [key]: arr
+      }, () => { this.buildJSON() })
+    });
+  }
+
+  deleteKey(key, index) {
+    var arr = this.state[key].slice();
+    var deleteAtt = arr[index];
+    arr.splice(index, 1);
+    this.setState({
+      [key]: []
+    }, () => { 
+      this.setState({
+        [key]: arr
+      }, () => { this.buildJSON() });
+     });
+  }
 
   newAttribute() {
     var arr = this.state.attributes.slice();
-    console.log(arr);
     arr.splice(0,0, {'attribute': '', 'value':[]});
-    console.log(arr);
     this.buildAttributes(arr);
   }
   
@@ -244,13 +302,16 @@ class App extends Component {
 
   buildValue(type, obj, indent) {
     let output = '';
-
+    let key = '';
     switch (type) {
       case 'property':
         output = '\t'.repeat(indent)  + '"style": {';
         break;
       case 'attribute':
         output = '\t'.repeat(indent) + '"attributes": {';
+        break;
+      case 'customRowActions':
+        output = output = '\t'.repeat(indent) + '"customRowAction": {';
         break;
     }
 
@@ -263,6 +324,7 @@ class App extends Component {
         value = this.parseString(ele.value, indent);
       }
       // craft value
+      console.log(ele);
       output = output + `
       "` + ele[type] + '": ' + value;
       
@@ -307,7 +369,7 @@ class App extends Component {
     });
 
     output = output + '\n' + '\t'.repeat(indent) + '}';
-
+    
     return output;
   }  
 
@@ -317,30 +379,27 @@ class App extends Component {
     var JSON_Body = ``;
     var JSON_Header = 
     `{
-      "elmType": "div",
+      "elmType": "` + this.state.elmType + `",
       "txtContent": ` + this.parseString(this.state.textContent, indent) + `,
       `;
     var JSON_Footer = ``;
     var JSON_Properties = '';
-    var JSON_Properties_Footer = '';
-
     var JSON_Attributes = '';
-
+    var JSON_CustomRowActions = '';
+    
     
     // BUILD JSON HERE in forEach loop for ATTRIBUTES
     indent++;
     
     JSON_Properties = JSON_Properties + this.buildValue('property', this.state.properties, indent);
     JSON_Attributes = JSON_Attributes + this.buildValue('attribute', this.state.attributes, indent);
-    
+    JSON_CustomRowActions = JSON_CustomRowActions + this.buildValue('customRowActions', this.state.customRowActions, indent);
 
-   
-    
     // JSON Footer 
     JSON_Footer = `\n}`; 
 
     // build body of properties and attributes
-    JSON_Body = JSON_Properties + ",\n" + JSON_Attributes;
+    JSON_Body = JSON_Properties + ",\n" + JSON_Attributes + ",\n" + JSON_CustomRowActions ;
 
     // Set Output
     this.setState({
@@ -379,7 +438,8 @@ class App extends Component {
           <b>[$PeoplePicker.email]</b> - refers to email of the person in a people picker field 
           <br><br>
 
-          Note: If you have spaces in the field name, those are defined as _x0020_. For example, a field named "Due Date" should be referenced as $Due_x0020_Date.
+          Note: If you have spaces in the field name, those are defined as _x0020_. For example, a field named "Due Date" should be referenced as $Due_x0020_Date.<br><br>
+          Note2: Use <b>++</b> to concatenate
           `
         })
 
@@ -418,7 +478,19 @@ class App extends Component {
         <MyModal toggleModal={this.toggleModal} isOpen={this.state.modal} modalHeader={this.state.modalHeader} modalBody={this.state.modalBody} />
 
         <Row>
-          <Col sm='6' md='6' lg='6' xl='6'>
+        <Col sm='4' md='4' lg='4' xl='4'>
+            <Label className='label center-input remove-text-highlighting'>Element Type</Label>
+            <Input className='field-type center-input' type='select' name='elmType' value={this.state.elmType} onChange={this.handleInputChange}>
+              <option>div</option>
+              <option>span</option>
+              <option>a</option>
+              <option>img</option>
+              <option>svg</option>
+              <option>path</option>
+              <option>button</option>
+            </Input>
+          </Col>
+          <Col sm='4' md='4' lg='4' xl='4'>
             <Label className='label center-input remove-text-highlighting'>Field Type</Label>
             <Input className='field-type center-input' type='select' name='fieldType' value={this.state.fieldType} onChange={this.handleInputChange}>
               <option>Choice</option>
@@ -426,7 +498,7 @@ class App extends Component {
               <option>Number</option>
             </Input>
           </Col>
-          <Col sm='6' md='6' lg='6' xl='6'>
+          <Col sm='4' md='4' lg='4' xl='4'>
             <Label className='label center-input remove-text-highlighting'>Text Content (<span class='help-link' value="text content help" onClick={this.displayModal}>help</span>)</Label>
             <Input className='text-content center-input' type='text' name='textContent' value={this.state.textContent} onChange={this.handleInputChange} />
           </Col>
@@ -435,6 +507,9 @@ class App extends Component {
 
         {/* Attributes */}
         <Row>
+         <div className="side-info attributes-color">
+                <span>Attributes</span>
+          </div>
           <Col>
             <Row className='padded-row'>
               <div className='center-input'>
@@ -456,6 +531,16 @@ class App extends Component {
 
         {/* Properties */}
         <Row>
+          <div className="side-info properties-color">
+                <span>Properties</span>
+          </div>
+
+          
+{/*           
+          <div class='side-info'>
+              <div>Properties</div>
+          </div> */}
+
           <Col>
             <Row className='padded-row'>
               <div className='center-input'>
@@ -472,6 +557,29 @@ class App extends Component {
               })}
             </Row>
             
+          </Col>
+        </Row>
+
+        {/* Custom Row Action */}
+        <Row>
+          <div className="side-info customRowActions-color">
+                <span>Row Actions</span>
+          </div>
+          <Col>
+            <Row className='padded-row'>
+              <div className='center-input'>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('customRowActions')}>New Custom Row Action</Button>
+              </div>
+              <div className='center-input'>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.customRowActions.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('customRowActions')}>Clear All Custom Row Actions</Button>
+              </div>
+            
+            </Row>
+            <Row>
+              {Object.keys(this.state.customRowActions).map((key, i) => {
+                return (<CustomRowAction key={i} index={i} name='' colors={this.state.colors} customRowActions={this.state.customRowActions} customRowActionChoices={this.state.customRowActionChoices} updateCRA={this.updateCRA} deleteKey={this.deleteKey} buildJSON={this.buildJSON} displayModal={this.displayModal} />)
+              })}
+            </Row>
           </Col>
         </Row>
 
