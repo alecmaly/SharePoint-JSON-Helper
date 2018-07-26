@@ -252,6 +252,7 @@ class App extends Component {
     });
     this.clearAllProperties();
     this.clearAllAttributes();
+    this.clearAllKeys('customRowActions');
   }
 
   newProperty() {

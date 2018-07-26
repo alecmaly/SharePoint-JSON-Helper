@@ -229,6 +229,7 @@ body {
   width: 1.5em;
   min-height: 6em;
   position: relative;
+  cursor: default;
 }
 
 .side-info span {
