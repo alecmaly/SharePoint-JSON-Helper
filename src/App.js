@@ -35,6 +35,7 @@ import {
   ModalBody,
   ModalFooter
 } from 'reactstrap';
+import { SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER } from 'constants';
 
 class App extends Component {
   
@@ -56,7 +57,10 @@ class App extends Component {
     this.deleteProperty = this.deleteProperty.bind(this);
     this.buildProperties = this.buildProperties.bind(this);
     this.clearAllProperties = this.clearAllProperties.bind(this);
+    this.validParen = this.validParen.bind(this);
     this.parseString = this.parseString.bind(this);
+    this.parseFunctions = this.parseFunctions.bind(this);
+    this.parseMathOperations = this.parseMathOperations.bind(this);
     this.buildValue = this.buildValue.bind(this);
     this.buildJSON = this.buildJSON.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -289,15 +293,122 @@ class App extends Component {
     }, () => { this.buildJSON() } );
   }
 
+
+  parseMathOperations(operator, str, indent) {
+    let value = str;
+    if (str.toString().includes(operator)) {
+      let temp_value = '\t'.repeat(++indent) + '"operator": "' + operator.charAt(1) + '",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
+      indent++;
+      str.split(operator).forEach((val, i) => { temp_value = temp_value + (this.state.fieldType !== 'Number' ? '\t'.repeat(indent) + this.parseString(val, indent) : this.parseString(val, indent).slice(1, -1)) + ',\n' });
+      indent--;
+                    // remove , from last item in list and add closing brackets
+      value = '{\n' + temp_value.slice(0,-2) + (str.toString().split(operator.charAt(1)).length === 1 ? ',\n' + '\t'.repeat(indent + 1) + '""' : '') + '\n' + '\t'.repeat(indent) +  ']\n}'; 
+    } 
+  
+    return value;
+  }
+
+  parseFunctions(str, indent) {
+    console.log("called w/: " + str);
+    let f = '';
+    let value = str;
+    let acceptedFunctions = ['toString', 'Number', 'Date', 'cos', 'sin', 'toLocaleString', 'toLocaleDateString', 'toLocaleTimeString']; 
+    
+    // only if () are in string
+    if ((str.match(/\(/g) || []).length === (str.match(/\)/g) || []).length) {  
+      // set index to innermost '('
+      let index = str.lastIndexOf('(');
+      
+      // before(inner)after
+      let before = str.substring(0, index - f.length + 1);
+      let inner = str.substring(index + 1, str.indexOf(')', index));
+      let after = str.substring(str.indexOf(')', index) + 1, str.length);
+
+      // check what function is being called, remove function name from 'before' variable
+      for (var i = 0; i < acceptedFunctions.length; i++) {
+        if (before.slice(-acceptedFunctions[i].length - 1, -1) === acceptedFunctions[i]) {
+          f = acceptedFunctions[i];
+          before = before.slice(0, -acceptedFunctions[i].length - 1);
+          console.log(acceptedFunctions[i]);
+          break;
+        }      
+      }
+      
+      if (f === '') {
+        // console.log("f:" + f);
+        // console.log("index: " + index);
+        // console.log("All: " + str);
+        // console.log("before: " + before);
+        // console.log("inner: " + inner);
+        // console.log("after: " + after);
+        before = before.slice(0, -1);
+        str =  this.parseString(inner, indent);//this.parseString(inner, index) + after;   
+      
+        value = this.parseString(before + '~' + after, indent).replace('~', str);
+        //value = value.slice(1, -1);
+      } else { // order of operations w/ () - not a function call
+        console.log("f(" + index + "): " + f);
+        let temp_value = '\t'.repeat(++indent) + '"operator": "' + f + '()",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
+        
+        str =  this.parseString(inner, indent);//this.parseString(inner, index) + after;   
+        
+        temp_value = temp_value + str;
+        
+        value = '{\n' + '\t'.repeat(++indent) + temp_value + '\n' + '\t'.repeat(indent) +  ']\n}';
+        value = this.parseString(before + '~' + after, indent).replace('~', value);
+      }
+
+
+
+       
+      
+      // NEED TO PARSE AND REMOVE (
+      //str = str.substring(0, str.indexOf(')')) + str.substring(str.indexOf(')') + 1, str.length); 
+      
+    }
+
+    // Number(toString(3++3)++4)++10
+
+    return value;
+  }
+
+  // validate proper function (prevents stack overflow)
+  validParen(str) {
+    let arr = [];
+    for (let i = 0; i < str.length; i++) {
+      if (str.charAt(i) === '(')
+        arr.push('(');
+      else if (str.charAt(i) === ')')
+        arr.pop();
+    }
+    return (arr.length === 0 ? true : false);
+  }
+
   parseString(str, indent) {
     let value = '"' + str + '"';
-    if (str.toString().includes('++')) {
-      value = '\t'.repeat(++indent) + '"operator": "+",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
-      indent++;
-      str.split('++').forEach((val, i) => { value = value + (this.state.fieldType !== 'Number' ? '\t'.repeat(indent) + `"` + val + `"` : val) + ',\n' });
-      indent--;
-      value = '{\n' + value.slice(0,-2) + (str.toString().split('++').length === 1 ? ',\n' + '\t'.repeat(indent + 1) + '""' : '') + '\n' + '\t'.repeat(indent) +  ']\n}';
-    } 
+
+    //if (((str.match(/\(/g) || []).length === (str.match(/\)/g) || []).length) && str.indexOf('(') >= 0 && (str.indexOf('(') < str.indexOf(')'))) {
+    // parses functions and () order of operations
+    if (this.validParen(str) && str.indexOf('(') >= 0) { 
+      value = value.replace(str, this.parseFunctions(str, indent));
+    }
+    value = value.replace(str, this.parseMathOperations('--', str, indent));
+    value = value.replace(str, this.parseMathOperations('++', str, indent));
+    value = value.replace(str, this.parseMathOperations('//', str, indent));
+    value = value.replace(str, this.parseMathOperations('**', str, indent));
+    //value = value.replace(str, this.parseFunctions('(', str, indent));    
+
+    
+    
+    //value = value.replace(str, this.parseMathOperations('&&', str, indent));
+    //value = value.replace(str, this.parseMathOperations('||', str, indent));
+    // && || == < > <= >=
+    //if (value.charAt(1) === '(')
+    //  value = value.slice(1, -1);
+
+    if (value.charAt(1) === '{' || value === '"~"')
+      value = value.slice(1, -1);
+
     return value;
   }
 
@@ -340,6 +451,9 @@ class App extends Component {
             indent--;
             value = '{\n' + value.slice(0,-2) + (condition.value.toString().split('++').length === 1 ? ',\n' + '\t'.repeat(indent + 1) + '""' : '') + '\n' + '\t'.repeat(indent) +  ']\n}';
           } 
+
+          // PULL OUT INTO A DO_ARITHMATIC() FUNCITON
+          // Also add functions for ToString(__var__), Date(__var__), etc
 
           // ADD VALUE CREATION HERE FOR EACH RULE
           output = output + `\n
@@ -497,6 +611,7 @@ class App extends Component {
               <option>Choice</option>
               <option>Text</option>
               <option>Number</option>
+              <option>Date</option>
             </Input>
           </Col>
           <Col sm='4' md='4' lg='4' xl='4'>

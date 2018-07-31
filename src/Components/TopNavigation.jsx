@@ -40,6 +40,10 @@ class TopNavigation extends Component {
                                 Quick Add
                             </DropdownToggle>
                                 <DropdownMenu right>
+                                    <DropdownItem name='attribute' value='href' title='' onClick={this.props.navButtonClick}>
+                                        Hyperlink
+                                    </DropdownItem>
+                                    <DropdownItem divider />
                                     <DropdownItem name='property' value='background-color' title='' onClick={this.props.navButtonClick}>
                                         Background Color
                                     </DropdownItem>
@@ -48,9 +52,6 @@ class TopNavigation extends Component {
                                     </DropdownItem>
                                     <DropdownItem name='property' value='font-size' title='' onClick={this.props.navButtonClick}>
                                         Font Size
-                                    </DropdownItem>
-                                    <DropdownItem name='attribute' value='href' title='' onClick={this.props.navButtonClick}>
-                                        Hyperlink
                                     </DropdownItem>
                                 </DropdownMenu>
                         </UncontrolledDropdown>
@@ -81,6 +82,9 @@ class TopNavigation extends Component {
                                     </DropdownItem>
                                     <DropdownItem target='_blank' href='https://www.youtube.com'>
                                         YouTube Tutorial
+                                    </DropdownItem>
+                                    <DropdownItem target='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/icons'>
+                                        Fabric Icons
                                     </DropdownItem>
                                 </DropdownMenu>
                         </UncontrolledDropdown>
