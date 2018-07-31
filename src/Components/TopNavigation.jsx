@@ -83,8 +83,8 @@ class TopNavigation extends Component {
                                     <DropdownItem target='_blank' href='https://www.youtube.com'>
                                         YouTube Tutorial
                                     </DropdownItem>
-                                    <DropdownItem target='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/icons'>
-                                        Fabric Icons
+                                    <DropdownItem target='_blank' href='https://github.com/alecjmaly/SharePoint-JSON-Helper'>
+                                        Source Code
                                     </DropdownItem>
                                 </DropdownMenu>
                         </UncontrolledDropdown>

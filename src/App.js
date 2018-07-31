@@ -314,58 +314,53 @@ class App extends Component {
     let value = str;
     let acceptedFunctions = ['toString', 'Number', 'Date', 'cos', 'sin', 'toLocaleString', 'toLocaleDateString', 'toLocaleTimeString']; 
     
-    // only if () are in string
-    if ((str.match(/\(/g) || []).length === (str.match(/\)/g) || []).length) {  
-      // set index to innermost '('
-      let index = str.lastIndexOf('(');
-      
-      // before(inner)after
-      let before = str.substring(0, index - f.length + 1);
-      let inner = str.substring(index + 1, str.indexOf(')', index));
-      let after = str.substring(str.indexOf(')', index) + 1, str.length);
+    
+    // set index to innermost '('
+    let index = str.lastIndexOf('(');
+    
+    // before(inner)after
+    let before = str.substring(0, index - f.length + 1);
+    let inner = str.substring(index + 1, str.indexOf(')', index));
+    let after = str.substring(str.indexOf(')', index) + 1, str.length);
 
-      // check what function is being called, remove function name from 'before' variable
-      for (var i = 0; i < acceptedFunctions.length; i++) {
-        if (before.slice(-acceptedFunctions[i].length - 1, -1) === acceptedFunctions[i]) {
-          f = acceptedFunctions[i];
-          before = before.slice(0, -acceptedFunctions[i].length - 1);
-          console.log(acceptedFunctions[i]);
-          break;
-        }      
-      }
-      
-      if (f === '') {
-        // console.log("f:" + f);
-        // console.log("index: " + index);
-        // console.log("All: " + str);
-        // console.log("before: " + before);
-        // console.log("inner: " + inner);
-        // console.log("after: " + after);
-        before = before.slice(0, -1);
-        str =  this.parseString(inner, indent);//this.parseString(inner, index) + after;   
-      
-        value = this.parseString(before + '~' + after, indent).replace('~', str);
-        //value = value.slice(1, -1);
-      } else { // order of operations w/ () - not a function call
-        console.log("f(" + index + "): " + f);
-        let temp_value = '\t'.repeat(++indent) + '"operator": "' + f + '()",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
-        
-        str =  this.parseString(inner, indent);//this.parseString(inner, index) + after;   
-        
-        temp_value = temp_value + str;
-        
-        value = '{\n' + '\t'.repeat(++indent) + temp_value + '\n' + '\t'.repeat(indent) +  ']\n}';
-        value = this.parseString(before + '~' + after, indent).replace('~', value);
-      }
-
-
-
-       
-      
-      // NEED TO PARSE AND REMOVE (
-      //str = str.substring(0, str.indexOf(')')) + str.substring(str.indexOf(')') + 1, str.length); 
-      
+    // check what function is being called, remove function name from 'before' variable
+    for (var i = 0; i < acceptedFunctions.length; i++) {
+      if (before.slice(-acceptedFunctions[i].length - 1, -1) === acceptedFunctions[i]) {
+        f = acceptedFunctions[i];
+        before = before.slice(0, -acceptedFunctions[i].length - 1);
+        console.log(acceptedFunctions[i]);
+        break;
+      }      
     }
+    
+    if (f === '') {
+      // console.log("f:" + f);
+      // console.log("index: " + index);
+      // console.log("All: " + str);
+      // console.log("before: " + before);
+      // console.log("inner: " + inner);
+      // console.log("after: " + after);
+      before = before.slice(0, -1);
+      str =  this.parseString(inner, indent);//this.parseString(inner, index) + after;   
+    
+      value = this.parseString(before + '~' + after, indent).replace('~', str);
+      //value = value.slice(1, -1);
+    } else { // order of operations w/ () - not a function call
+      console.log("f(" + index + "): " + f);
+      let prefix = '\t'.repeat(++indent) + '"operator": "' + f + '()",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
+      
+      str =  this.parseString(inner, indent);//this.parseString(inner, index) + after;   
+      console.log("str: " + str);
+
+      str = prefix + str;
+      
+      value = '{\n' + '\t'.repeat(++indent) + str + '\n' + '\t'.repeat(indent) +  ']\n}';
+      value = this.parseString(before + '~' + after, indent).replace('~', value);
+    }
+
+    // fails:   Number((Number(4)++Number(4))//Number(5))
+
+  
 
     // Number(toString(3++3)++4)++10
 
@@ -409,6 +404,7 @@ class App extends Component {
     if (value.charAt(1) === '{' || value === '"~"')
       value = value.slice(1, -1);
 
+
     return value;
   }
 
@@ -443,14 +439,14 @@ class App extends Component {
       if (typeof ele.value === 'object') {   
         // false
         ele.value.forEach( (condition) => {
-          value = '"' + condition.value + '"';
-          if (condition.value.toString().includes('++')) {
-            value = '\t'.repeat(++indent) + '"operator": "+",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
-            indent++;
-            condition.value.split('++').forEach((val, i) => { value = value + (this.state.fieldType !== 'Number' ? '\t'.repeat(indent) + `"` + val + `"` : val) + ',\n' });
-            indent--;
-            value = '{\n' + value.slice(0,-2) + (condition.value.toString().split('++').length === 1 ? ',\n' + '\t'.repeat(indent + 1) + '""' : '') + '\n' + '\t'.repeat(indent) +  ']\n}';
-          } 
+          //value = '"' + condition.value + '"';
+          // if (condition.value.toString().includes('++')) {
+          //   value = '\t'.repeat(++indent) + '"operator": "+",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
+          //   indent++;
+          //   condition.value.split('++').forEach((val, i) => { value = value + (this.state.fieldType !== 'Number' ? '\t'.repeat(indent) + `"` + val + `"` : val) + ',\n' });
+          //   indent--;
+          //   value = '{\n' + value.slice(0,-2) + (condition.value.toString().split('++').length === 1 ? ',\n' + '\t'.repeat(indent + 1) + '""' : '') + '\n' + '\t'.repeat(indent) +  ']\n}';
+          // } 
 
           // PULL OUT INTO A DO_ARITHMATIC() FUNCITON
           // Also add functions for ToString(__var__), Date(__var__), etc
@@ -463,11 +459,11 @@ class App extends Component {
           {
               "operator": "` + condition.operator + `",
               "operands": [
-                  ` + (this.state.fieldType !== 'Number' ? `"` + condition.operand + `"` : condition.operand) + `,
-                  ` + (this.state.fieldType !== 'Number' ? `"` + condition.operand2 + `"` : condition.operand2) + `
+                  ` + (this.state.fieldType !== 'Number' ? this.parseString(condition.operand, indent) : this.parseString(condition.operand, indent).slice(1, -1)) + `,
+                  ` + (this.state.fieldType !== 'Number' ? this.parseString(condition.operand2, indent) : this.parseString(condition.operand2, indent).slice(1, -1)) + `
               ]
           },
-          ` + value + `, `
+          ` + this.parseString(condition.value, indent) + `, `
         })
         // end false
       }
@@ -553,6 +549,13 @@ class App extends Component {
           <b>[$PeoplePicker.email]</b> - refers to email of the person in a people picker field 
           <br><br>
 
+          Basic math functions (parenthases <b>()</b> are also supported):<br>
+          multiply (<b>**</b>), divide (<b>//</b>), add (<b>++</b>), subtract (<b>--</b>)<br><br>
+
+          Functions:<br>
+          <b>toString()</b>, <b>Number()</b>, <b>Date()</b>, <b>cos()</b>, <b>sin()</b>, <b>toLocaleString()</b>, <b>toLocaleDateString()</b>, <b>toLocaleTimeString()</b>
+          <br><br>
+          <br>
           Note: If you have spaces in the field name, those are defined as _x0020_. For example, a field named "Due Date" should be referenced as $Due_x0020_Date.<br><br>
           Note2: Use <b>++</b> to concatenate
           `

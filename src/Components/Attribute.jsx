@@ -137,7 +137,7 @@ class Attribute extends Component {
                 <Col sm='12' md='5'>
                     {!this.state.conditionalFlag ? 
                         <div>
-                            <Label className='label remove-text-highlighting'>Value<span style={{'visibility': (this.state.property === 'background-color' || this.state.property ==='color') ? 'visible' : 'hidden' }}> (<a target='_blank' href='https://www.w3schools.com/colors/colors_picker.asp'>help</a>)</span></Label>
+                            <Label className='label remove-text-highlighting'>Value<span style={{'visibility': (this.state.property === 'iconName') ? 'visible' : 'hidden' }}> (<a target='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/icons'>help</a>)</span></Label>
                             <InputGroup>   
                                 <Input className='center-input wrap-value' type='textarea' name='value' placeholder={  this.props.attributeChoices[this.state.property] !== undefined && this.props.attributeChoices[this.state.property].placeholder !== undefined ? this.props.attributeChoices[this.state.property].placeholder : '' } value={this.state.value} onChange={this.handleInputChange} />
                                 <InputGroupButtonDropdown addonType='append' isOpen={this.state.valueDropdownOpen} toggle={this.toggleValueDropdownOpen}
