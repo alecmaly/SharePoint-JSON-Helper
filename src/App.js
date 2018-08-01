@@ -600,7 +600,9 @@ class App extends Component {
         <MyModal toggleModal={this.toggleModal} isOpen={this.state.modal} modalHeader={this.state.modalHeader} modalBody={this.state.modalBody} />
 
         <Row>
-        <Col sm='4' md='4' lg='4' xl='4'>
+        
+        {/* <Col sm='4' md='4' lg='4' xl='4'> */}
+        <Col sm='6' md='6' lg='6' xl='6'>
             <Label className='label center-input remove-text-highlighting'>Element Type</Label>
             <Input className='field-type center-input' type='select' name='elmType' value={this.state.elmType} onChange={this.handleInputChange}>
               <option>div</option>
@@ -612,6 +614,8 @@ class App extends Component {
               <option>button</option>
             </Input>
           </Col>
+
+          {/*
           <Col sm='4' md='4' lg='4' xl='4'>
             <Label className='label center-input remove-text-highlighting'>Field Type</Label>
             <Input className='field-type center-input' type='select' name='fieldType' value={this.state.fieldType} onChange={this.handleInputChange}>
@@ -621,7 +625,10 @@ class App extends Component {
               <option>Date</option>
             </Input>
           </Col>
-          <Col sm='4' md='4' lg='4' xl='4'>
+          */}
+
+          {/* <Col sm='4' md='4' lg='4' xl='4'> */}
+          <Col sm='6' md='6' lg='6' xl='6'>
             <Label className='label center-input remove-text-highlighting'>Text Content (<span class='help-link' value="text content help" onClick={this.displayModal}>help</span>)</Label>
             <Input className='text-content center-input' type='text' name='textContent' value={this.state.textContent} onChange={this.handleInputChange} />
           </Col>
