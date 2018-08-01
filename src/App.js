@@ -296,14 +296,23 @@ class App extends Component {
 
   parseMathOperations(operator, str, indent) {
     let value = str;
-    if (str.toString().includes(operator)) {
-      let temp_value = '\t'.repeat(++indent) + '"operator": "' + operator.charAt(1) + '",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
-      indent++;
-      str.split(operator).forEach((val, i) => { temp_value = temp_value + (this.state.fieldType !== 'Number' ? '\t'.repeat(indent) + this.parseString(val, indent) : this.parseString(val, indent).slice(1, -1)) + ',\n' });
-      indent--;
-                    // remove , from last item in list and add closing brackets
-      value = '{\n' + temp_value.slice(0,-2) + (str.toString().split(operator.charAt(1)).length === 1 ? ',\n' + '\t'.repeat(indent + 1) + '""' : '') + '\n' + '\t'.repeat(indent) +  ']\n}'; 
-    } 
+    switch (operator) {
+      case '//':
+        if (str.includes('https://') || str.includes('http://')) 
+          break;
+      default:
+        if (str.toString().includes(operator))  {
+          let temp_value = '\t'.repeat(++indent) + '"operator": "' + operator.charAt(1) + '",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
+          indent++;
+          str.split(operator).forEach((val, i) => { temp_value = temp_value + (this.state.fieldType !== 'Number' ? '\t'.repeat(indent) + this.parseString(val, indent) : this.parseString(val, indent).slice(1, -1)) + ',\n' });
+          indent--;
+                        // remove , from last item in list and add closing brackets
+          value = '{\n' + temp_value.slice(0,-2) + (str.toString().split(operator.charAt(1)).length === 1 ? ',\n' + '\t'.repeat(indent + 1) + '""' : '') + '\n' + '\t'.repeat(indent) +  ']\n}'; 
+        } 
+
+    }
+
+    
   
     return value;
   }
