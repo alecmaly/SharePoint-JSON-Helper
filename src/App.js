@@ -546,14 +546,18 @@ class App extends Component {
           <b>@now</b> - current date/time <br>
           <b>@me</b> - current user's email <br>
           <b>[$FieldName]</b> - refers to value in field on same row <br>
-          <b>[$PeoplePicker.email]</b> - refers to email of the person in a people picker field 
+          <b>[$PeoplePicker.email]</b> - refers to email of the person in a people picker field<br>
+          People picker field properties: <b>id</b>, <b>title</b>, <b>email</b>, <b>sip</b>, <b>picture</b>
           <br><br>
 
           Basic math functions (parenthases <b>()</b> are also supported):<br>
           multiply (<b>**</b>), divide (<b>//</b>), add (<b>++</b>), subtract (<b>--</b>)<br><br>
 
           Functions:<br>
-          <b>toString()</b>, <b>Number()</b>, <b>Date()</b>, <b>cos()</b>, <b>sin()</b>, <b>toLocaleString()</b>, <b>toLocaleDateString()</b>, <b>toLocaleTimeString()</b>
+          <b>toString()</b>, <b>Number()</b>, <b>Date()</b>, <b>cos()</b>, <b>sin()</b>,<br>
+          <b>toLocaleString()</b> [Displays a date type fully expanded with date and time],<br>
+          <b>toLocaleDateString()</b> [Displays a date type with just the date],<br>
+          <b>toLocaleTimeString()</b> [Displays a date type with just the time]
           <br><br>
           <br>
           Note: If you have spaces in the field name, those are defined as _x0020_. For example, a field named "Due Date" should be referenced as $Due_x0020_Date.<br><br>

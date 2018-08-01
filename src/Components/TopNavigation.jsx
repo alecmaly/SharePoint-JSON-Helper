@@ -96,7 +96,10 @@ class TopNavigation extends Component {
             </div>
         )
     }
-
 }
+
+
+// Verbose Schema
+// https://gist.github.com/thechriskent/2e09be14a4b491cfae256220cfca6310
 
 export default TopNavigation;
