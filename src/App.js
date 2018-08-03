@@ -318,7 +318,6 @@ class App extends Component {
   }
 
   parseFunctions(str, indent) {
-    console.log("called w/: " + str);
     let f = '';
     let value = str;
     let acceptedFunctions = ['toString', 'Number', 'Date', 'cos', 'sin', 'toLocaleString', 'toLocaleDateString', 'toLocaleTimeString']; 
@@ -337,7 +336,6 @@ class App extends Component {
       if (before.slice(-acceptedFunctions[i].length - 1, -1) === acceptedFunctions[i]) {
         f = acceptedFunctions[i];
         before = before.slice(0, -acceptedFunctions[i].length - 1);
-        console.log(acceptedFunctions[i]);
         break;
       }      
     }
@@ -355,12 +353,10 @@ class App extends Component {
       value = this.parseString(before + '~' + after, indent).replace('~', str);
       //value = value.slice(1, -1);
     } else { // order of operations w/ () - not a function call
-      console.log("f(" + index + "): " + f);
       let prefix = '\t'.repeat(++indent) + '"operator": "' + f + '()",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
       
       str =  this.parseString(inner, indent);//this.parseString(inner, index) + after;   
-      console.log("str: " + str);
-
+      
       str = prefix + str;
       
       value = '{\n' + '\t'.repeat(++indent) + str + '\n' + '\t'.repeat(indent) +  ']\n}';
@@ -410,8 +406,10 @@ class App extends Component {
     //if (value.charAt(1) === '(')
     //  value = value.slice(1, -1);
 
-    if (value.charAt(1) === '{' || value === '"~"')
+    // backslashes for Flow Parameters command
+    if ( (value.charAt(1) === '{' && value.charAt(2) === '\\\\') || value === '"~"') {
       value = value.slice(1, -1);
+    }
 
 
     return value;
@@ -441,7 +439,6 @@ class App extends Component {
         value = this.parseString(ele.value, indent);
       }
       // craft value
-      console.log(ele);
       output = output + `
       "` + ele[type] + '": ' + value;
       
@@ -543,35 +540,11 @@ class App extends Component {
   }
 
   displayModal(event) {
-    console.log(event.target);
     switch(event.target.attributes.value.value) {
       case 'text content help':
         this.setState({
           modalHeader: 'Text Context Help',
-          modalBody: `
-          <b onClick={this.props.newProperty}>@currentField</b> - refers to text in current field. <br>
-          <b>@currentField.title</b> - Person fields are represented in the system as objects, and a person’s display name is contained within that object’s title property <br>
-          <b>@currentField.lookupValue</b> -  Lookup fields are also represented as objects; the display text is stored in the lookupValue property <br>
-          <b>@now</b> - current date/time <br>
-          <b>@me</b> - current user's email <br>
-          <b>[$FieldName]</b> - refers to value in field on same row <br>
-          <b>[$PeoplePicker.email]</b> - refers to email of the person in a people picker field<br>
-          People picker field properties: <b>id</b>, <b>title</b>, <b>email</b>, <b>sip</b>, <b>picture</b>
-          <br><br>
-
-          Basic math functions (parenthases <b>()</b> are also supported):<br>
-          multiply (<b>**</b>), divide (<b>//</b>), add (<b>++</b>), subtract (<b>--</b>)<br><br>
-
-          Functions:<br>
-          <b>toString()</b>, <b>Number()</b>, <b>Date()</b>, <b>cos()</b>, <b>sin()</b>,<br>
-          <b>toLocaleString()</b> [Displays a date type fully expanded with date and time],<br>
-          <b>toLocaleDateString()</b> [Displays a date type with just the date],<br>
-          <b>toLocaleTimeString()</b> [Displays a date type with just the time]
-          <br><br>
-          <br>
-          Note: If you have spaces in the field name, those are defined as _x0020_. For example, a field named "Due Date" should be referenced as $Due_x0020_Date.<br><br>
-          Note2: Use <b>++</b> to concatenate
-          `
+          modalBody: data.modalBody_TextContentHelp
         })
 
         this.toggleModal();
@@ -603,7 +576,13 @@ class App extends Component {
             </Row>
           </Jumbotron>
         </header>
+        <ul className='nav nav-tabs'>
+            <li class='active'><a data-toggle='tab' href='#'>Variables</a></li>
+            <li><a data-toggle='tab' href='#'>Functions</a></li>
+            <li><a href='#'>TEST</a></li>
 
+        </ul>
+        
         <TopNavigation navButtonClick={this.navButtonClick} />
 
         <MyModal toggleModal={this.toggleModal} isOpen={this.state.modal} modalHeader={this.state.modalHeader} modalBody={this.state.modalBody} />
