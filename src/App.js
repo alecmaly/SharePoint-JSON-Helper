@@ -407,12 +407,15 @@ class App extends Component {
     value = value.replace(str, this.parseMathOperations('**', str, indent));
  
 
-    // backslashes for Flow Parameters command
-    if ( (value.charAt(1) === '{' && value.charAt(2) === '\\\\') || value === '"~"') {
-    //if ( value.charAt(1) === '{' || value === '"~"') 
-      value = value.slice(1, -1);
+    // backslashes for Flow actionParameters command
+    if ( value.charAt(1) === '{' || value === '"~"') {
+        value = value.slice(1, -1);
     }
 
+
+    // add " back to Flow Parameters
+    if (value.includes("{\\\"id\\\": \\\""))
+      value = '"' + value + '"';
 
     return value;
   }
