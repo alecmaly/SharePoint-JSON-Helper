@@ -139,7 +139,7 @@ class Condition extends Component {
             <Col>
                 <Row>
                     <Col sm='3'>
-                        <Label className='label remove-text-highlighting'>Operand (<span class='help-link' value="text content help" onClick={this.props.displayModal}>help</span>)</Label>
+                        <Label className='label remove-text-highlighting'>Operand <span class='help-link' value="text content help" onClick={this.props.displayModal}>(help)</span></Label>
                         <Input className='operand center-input' type='text' name='operand' placeholder='Compare to' value={this.state.operand} onChange={this.handleInputChange} />
                     </Col>
                     <Col sm='2'>
@@ -154,11 +154,11 @@ class Condition extends Component {
                         </Input>  
                     </Col>
                     <Col sm='3'>
-                        <Label className='label remove-text-highlighting'>Operand2 (<span class='help-link' value="text content help" onClick={this.props.displayModal}>help</span>)</Label>
+                        <Label className='label remove-text-highlighting'>Operand2 <span class='help-link' value="text content help" onClick={this.props.displayModal}>(help)</span></Label>
                         <Input className='operand center-input' type='text' name='operand2' placeholder='Compare to' value={this.state.operand2} onChange={this.handleInputChange} />
                     </Col>
                     <Col sm='4'>
-                        <Label className='label remove-text-highlighting'>Value</Label>
+                        <Label className='label remove-text-highlighting'>Value <span class='help-link' value={this.props.property} onClick={this.props.displayModal}>(help)</span></Label>
                         <InputGroup>   
                             <Input className='center-input' type='text' name='value' style={ { [this.props.property] : this.state.value} } 
                                 placeholder={  this.props.propertyChoices[this.props.property] !== undefined && this.props.propertyChoices[this.props.property].placeholder !== undefined ? this.props.propertyChoices[this.props.property].placeholder : '' } value={this.state.value} onChange={this.handleInputChange} />

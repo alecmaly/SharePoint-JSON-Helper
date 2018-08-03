@@ -97,29 +97,6 @@ export default {
             ]
         },
         modalBody_TextContentHelp: `
-        <ul class='nav nav-tabs'>
-            <li class='active'><a data-toggle='tab' href='#'>Variables</a></li>
-            <li><a data-toggle='tab' href='#'>Functions</a></li>
-            <li><a href='#'>TEST</a></li>
-
-        </ul>
-
-
-        <div class="tab-content">
-            <div id="Variables" class="tab-pane fade in active">
-                <h3>HOME</h3>
-                <p>Some content.</p>
-            </div>
-            <div id="Functions" class="tab-pane fade">
-                <h3>Menu 1</h3>
-                <p>Some content in menu 1.</p>
-            </div>
-            <div id="menu2" class="tab-pane fade">
-                <h3>Menu 2</h3>
-                <p>Some content in menu 2.</p>
-            </div>
-        </div>
-
         <b onClick={this.props.newProperty}>@currentField</b> - refers to text in current field. <br>
         <b>@currentField.title</b> - Person fields are represented in the system as objects, and a person’s display name is contained within that object’s title property <br>
         <b>@currentField.lookupValue</b> -  Lookup fields are also represented as objects; the display text is stored in the lookupValue property <br>

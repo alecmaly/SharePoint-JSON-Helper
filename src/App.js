@@ -85,6 +85,7 @@ class App extends Component {
       modal: false,
       modalHeader: '',
       modalBody: '',
+      modalTab: '1',
       attributeChoices: data.Attributes,
       propertyChoices: data.CSSProperties,
       customRowActionChoices: data.customRowActions,
@@ -312,7 +313,6 @@ class App extends Component {
 
     }
 
-    
   
     return value;
   }
@@ -340,13 +340,8 @@ class App extends Component {
       }      
     }
     
+    // check what function is being called - f === '' is no funciton - () order of operations
     if (f === '') {
-      // console.log("f:" + f);
-      // console.log("index: " + index);
-      // console.log("All: " + str);
-      // console.log("before: " + before);
-      // console.log("inner: " + inner);
-      // console.log("after: " + after);
       before = before.slice(0, -1);
       str =  this.parseString(inner, indent);//this.parseString(inner, index) + after;   
     
@@ -387,7 +382,6 @@ class App extends Component {
   parseString(str, indent) {
     let value = '"' + str + '"';
 
-    //if (((str.match(/\(/g) || []).length === (str.match(/\)/g) || []).length) && str.indexOf('(') >= 0 && (str.indexOf('(') < str.indexOf(')'))) {
     // parses functions and () order of operations
     if (this.validParen(str) && str.indexOf('(') >= 0) { 
       value = value.replace(str, this.parseFunctions(str, indent));
@@ -396,15 +390,7 @@ class App extends Component {
     value = value.replace(str, this.parseMathOperations('++', str, indent));
     value = value.replace(str, this.parseMathOperations('//', str, indent));
     value = value.replace(str, this.parseMathOperations('**', str, indent));
-    //value = value.replace(str, this.parseFunctions('(', str, indent));    
-
-    
-    
-    //value = value.replace(str, this.parseMathOperations('&&', str, indent));
-    //value = value.replace(str, this.parseMathOperations('||', str, indent));
-    // && || == < > <= >=
-    //if (value.charAt(1) === '(')
-    //  value = value.slice(1, -1);
+ 
 
     // backslashes for Flow Parameters command
     if ( (value.charAt(1) === '{' && value.charAt(2) === '\\\\') || value === '"~"') {
@@ -435,8 +421,13 @@ class App extends Component {
       // craft value
       let value = '';
       
-      if (typeof ele.value === 'string') {
-        value = this.parseString(ele.value, indent);
+      // FIX: CHANGE ele.attribute => ele.name when changing
+      if (!(ele.attribute === 'class' || ele.attribute === 'iconName')) {
+        if (typeof ele.value === 'string') {
+          value = this.parseString(ele.value, indent);
+        }
+      } else {
+        value = ele.value;
       }
       // craft value
       output = output + `
@@ -445,19 +436,6 @@ class App extends Component {
       if (typeof ele.value === 'object') {   
         // false
         ele.value.forEach( (condition) => {
-          //value = '"' + condition.value + '"';
-          // if (condition.value.toString().includes('++')) {
-          //   value = '\t'.repeat(++indent) + '"operator": "+",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
-          //   indent++;
-          //   condition.value.split('++').forEach((val, i) => { value = value + (this.state.fieldType !== 'Number' ? '\t'.repeat(indent) + `"` + val + `"` : val) + ',\n' });
-          //   indent--;
-          //   value = '{\n' + value.slice(0,-2) + (condition.value.toString().split('++').length === 1 ? ',\n' + '\t'.repeat(indent + 1) + '""' : '') + '\n' + '\t'.repeat(indent) +  ']\n}';
-          // } 
-
-          // PULL OUT INTO A DO_ARITHMATIC() FUNCITON
-          // Also add functions for ToString(__var__), Date(__var__), etc
-
-          // ADD VALUE CREATION HERE FOR EACH RULE
           output = output + `\n
         {
           "operator": "?",
@@ -544,11 +522,44 @@ class App extends Component {
       case 'text content help':
         this.setState({
           modalHeader: 'Text Context Help',
-          modalBody: data.modalBody_TextContentHelp
-        })
-
-        this.toggleModal();
+          modalBody: '<br>This value will be displayed in each cell',
+          modalTab: '2'
+        }, () => { this.toggleModal() } )
         break;
+        case 'iconName':
+          this.setState({
+            modalHeader: 'iconName Help',
+            modalBody: `<br>
+                        Use <a style='font-size: 115%' target='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/icons'>THIS</a> link to access available icons.</span><br>
+                        <br>
+                        Don't forget to check the left nav for more icons!<br>
+                        <b>Brand icons</b><br>
+                        <b>Icons</b><br>
+                        <b>Localization</b>`,
+            modalTab: '2'
+          }, () => { this.toggleModal() } )
+          break;
+        case 'class':
+          this.setState({
+            modalHeader: 'class Help',
+            modalBody: `<br>
+                        Here you can use SharePoint Framework classes.<br>
+                        Don't forget about <a style='font-size: 115%' target='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/animations'>Animations</a> and 
+                          <a style='font-size: 115%' target='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/typography'>Typography</a>!</span><br>
+                        <br>`,
+            modalTab: '2'
+          }, () => { this.toggleModal() } )
+          break;
+          
+
+        default:
+          this.setState({
+              modalHeader: 'Value Help',
+              modalBody: `<br>Enter the value to use.`,
+              modalTab: '1'
+            }, () => { this.toggleModal() } )
+          break;
+
     }
   }
 
@@ -561,7 +572,7 @@ class App extends Component {
             <Row>  
               <Col>
                 <h1>SharePoint Helper</h1>
-                <p>Used for building conditional formatting JSON - <a target='_blank' href='https://docs.microsoft.com/en-us/sharepoint/dev/declarative-customization/column-formatting'>Microsoft Docs</a> <br />
+                <p>Used for building conditional formatting JSON - <a target='_blank' href='https://www.youtube.com'>YouTube Tutorial</a> <br />
                 Note: Rules are read from top to bottom.
                 </p>
               </Col>
@@ -576,16 +587,11 @@ class App extends Component {
             </Row>
           </Jumbotron>
         </header>
-        <ul className='nav nav-tabs'>
-            <li class='active'><a data-toggle='tab' href='#'>Variables</a></li>
-            <li><a data-toggle='tab' href='#'>Functions</a></li>
-            <li><a href='#'>TEST</a></li>
-
-        </ul>
+        
         
         <TopNavigation navButtonClick={this.navButtonClick} />
 
-        <MyModal toggleModal={this.toggleModal} isOpen={this.state.modal} modalHeader={this.state.modalHeader} modalBody={this.state.modalBody} />
+        <MyModal toggleModal={this.toggleModal} isOpen={this.state.modal} modalHeader={this.state.modalHeader} modalBody={this.state.modalBody} modalTab={this.state.modalTab} />
 
         <Row>
         
@@ -617,7 +623,7 @@ class App extends Component {
 
           {/* <Col sm='4' md='4' lg='4' xl='4'> */}
           <Col sm='6' md='6' lg='6' xl='6'>
-            <Label className='label center-input remove-text-highlighting'>Text Content (<span class='help-link' value="text content help" onClick={this.displayModal}>help</span>)</Label>
+            <Label className='label center-input remove-text-highlighting'>Text Content <span class='help-link' value="text content help" onClick={this.displayModal}>(help)</span></Label>
             <Input className='text-content center-input' type='text' name='textContent' value={this.state.textContent} onChange={this.handleInputChange} />
           </Col>
         </Row>

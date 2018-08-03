@@ -40,10 +40,16 @@ class TopNavigation extends Component {
                                 Quick Add
                             </DropdownToggle>
                                 <DropdownMenu right>
+                                    <DropdownItem header>
+                                        Attributes
+                                    </DropdownItem>
                                     <DropdownItem name='attribute' value='href' title='' onClick={this.props.navButtonClick}>
                                         Hyperlink
                                     </DropdownItem>
                                     <DropdownItem divider />
+                                    <DropdownItem header>
+                                        CSS Properties
+                                    </DropdownItem>
                                     <DropdownItem name='property' value='background-color' title='' onClick={this.props.navButtonClick}>
                                         Background Color
                                     </DropdownItem>
@@ -77,8 +83,25 @@ class TopNavigation extends Component {
                                 Help
                             </DropdownToggle>
                                 <DropdownMenu right>
+                                    <DropdownItem header>
+                                        Microsoft Docs
+                                    </DropdownItem>
+                                    <DropdownItem target='_blank' href='https://docs.microsoft.com/en-us/sharepoint/dev/declarative-customization/column-formatting'>
+                                       JSON Formatting
+                                    </DropdownItem>
+                                    <DropdownItem target='_blank' href='https://developer.microsoft.com/en-us/fabric'>
+                                       SharePoint Fabric
+                                    </DropdownItem>
+                                    <DropdownItem divider />
+                                    <DropdownItem header>
+                                        Useful Tools
+                                    </DropdownItem>
                                     <DropdownItem target='_blank' href='https://jsonlint.com'>
-                                       JSON Lint    
+                                       JSON Lint 
+                                    </DropdownItem>
+                                    <DropdownItem divider />
+                                    <DropdownItem header>
+                                        App Specific
                                     </DropdownItem>
                                     <DropdownItem target='_blank' href='https://www.youtube.com'>
                                         YouTube Tutorial
