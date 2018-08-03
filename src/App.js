@@ -230,6 +230,12 @@ class App extends Component {
         arr.splice(0, 0, {'property': event.target.value, 'value': event.target.title});
         this.buildProperties(arr);
         break;
+      case 'CRA':
+        arr = this.state.customRowActions.slice();
+        arr.splice(0, 0, {'customRowActions': "actionParams", 'value': "{\\\"id\\\": \\\"FLOW_ID\\\"}"});
+        arr.splice(0, 0, {'customRowActions': "action", 'value': "executeFlow"});
+        this.buildKey('customRowActions', arr);
+        break;
         
 
 
@@ -402,10 +408,10 @@ class App extends Component {
  
 
     // backslashes for Flow Parameters command
-    //if ( (value.charAt(1) === '{' && value.charAt(2) === '\\\\') || value === '"~"') {
-    if ( value.charAt(1) === '{' || value === '"~"') 
+    if ( (value.charAt(1) === '{' && value.charAt(2) === '\\\\') || value === '"~"') {
+    //if ( value.charAt(1) === '{' || value === '"~"') 
       value = value.slice(1, -1);
-    //}
+    }
 
 
     return value;

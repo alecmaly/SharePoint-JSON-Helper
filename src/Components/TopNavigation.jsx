@@ -62,6 +62,13 @@ class TopNavigation extends Component {
                                     <DropdownItem name='property' value='overflow' title='auto' onClick={this.props.navButtonClick}>
                                         Text Overflow
                                     </DropdownItem>
+                                    <DropdownItem divider />
+                                    <DropdownItem header>
+                                        Custom Row Actions
+                                    </DropdownItem>
+                                    <DropdownItem name='CRA' value='Microsoft Flow' title='' onClick={this.props.navButtonClick}>
+                                        Microsoft Flow
+                                    </DropdownItem>
                                 </DropdownMenu>
                         </UncontrolledDropdown>
                         <UncontrolledDropdown nav>
