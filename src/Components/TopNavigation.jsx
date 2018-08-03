@@ -59,6 +59,9 @@ class TopNavigation extends Component {
                                     <DropdownItem name='property' value='font-size' title='' onClick={this.props.navButtonClick}>
                                         Font Size
                                     </DropdownItem>
+                                    <DropdownItem name='property' value='overflow' title='auto' onClick={this.props.navButtonClick}>
+                                        Text Overflow
+                                    </DropdownItem>
                                 </DropdownMenu>
                         </UncontrolledDropdown>
                         <UncontrolledDropdown nav>
@@ -69,8 +72,11 @@ class TopNavigation extends Component {
                                     <DropdownItem name='template' value='Completed/In Progress/Late' onClick={this.props.navButtonClick}>
                                         Completed/In Progress/Late
                                     </DropdownItem>
-                                    <DropdownItem name='template' value='Data Bars' onClick={this.props.navButtonClick}>
-                                        Data Bars
+                                    <DropdownItem name='template' value='Data Bars 1' onClick={this.props.navButtonClick}>
+                                        Data Bars 0-1
+                                    </DropdownItem>
+                                    <DropdownItem name='template' value='Data Bars 100' onClick={this.props.navButtonClick}>
+                                        Data Bars 0-100
                                     </DropdownItem>
                                 </DropdownMenu>
                         </UncontrolledDropdown>

@@ -212,8 +212,8 @@ class App extends Component {
         copyText.select();
         document.execCommand("copy");
         this.setState({
-          modalHeader: 'JSON has been copied to the clipboard',
-          modalBody: ''
+          modalHeader: 'Copy to Clipboard',
+          modalBody: '<br>JSON has been copied to the clipboard!'
         })
         this.toggleModal();
         break;
@@ -231,6 +231,8 @@ class App extends Component {
         this.buildProperties(arr);
         break;
         
+
+        
       case 'template':
         switch (event.target.value) {
           case 'Completed/In Progress/Late':
@@ -238,9 +240,16 @@ class App extends Component {
             arr = data.template_completedInProgressLate;
             this.buildProperties(arr);
             break;
-          case 'Data Bars':
+          case 'Data Bars 1':
+              this.resetForm();
+              arr = data.template_dataBars_one;
+              
+              this.buildProperties(arr.properties);
+              this.buildAttributes(arr.attributes);
+              break;
+          case 'Data Bars 100':
             this.resetForm();
-            arr = data.template_dataBars;
+            arr = data.template_dataBars_hundred;
             
             this.buildProperties(arr.properties);
             this.buildAttributes(arr.attributes);
@@ -393,9 +402,10 @@ class App extends Component {
  
 
     // backslashes for Flow Parameters command
-    if ( (value.charAt(1) === '{' && value.charAt(2) === '\\\\') || value === '"~"') {
+    //if ( (value.charAt(1) === '{' && value.charAt(2) === '\\\\') || value === '"~"') {
+    if ( value.charAt(1) === '{' || value === '"~"') 
       value = value.slice(1, -1);
-    }
+    //}
 
 
     return value;
@@ -427,7 +437,7 @@ class App extends Component {
           value = this.parseString(ele.value, indent);
         }
       } else {
-        value = ele.value;
+        value = '"' + ele.value + '"';
       }
       // craft value
       output = output + `

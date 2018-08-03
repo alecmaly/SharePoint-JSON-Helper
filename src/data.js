@@ -82,7 +82,21 @@ export default {
             }
           ]
         }],
-        template_dataBars: {
+        template_dataBars_one: {
+            attributes: [
+                {
+                    attribute: 'class',
+                    value: 'sp-field-dataBars'
+                }
+            ],
+            properties: [
+                {
+                    property: 'width',
+                    value: 'Number(@currentField)**Number(100)++%'
+                }
+            ]
+        },
+        template_dataBars_hundred: {
             attributes: [
                 {
                     attribute: 'class',
