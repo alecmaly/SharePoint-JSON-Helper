@@ -232,7 +232,7 @@ class App extends Component {
         break;
         
 
-        
+
       case 'template':
         switch (event.target.value) {
           case 'Completed/In Progress/Late':
@@ -533,7 +533,7 @@ class App extends Component {
         this.setState({
           modalHeader: 'Text Context Help',
           modalBody: '<br>This value will be displayed in each cell',
-          modalTab: '2'
+          modalTab: '1'
         }, () => { this.toggleModal() } )
         break;
         case 'iconName':
@@ -546,7 +546,7 @@ class App extends Component {
                         <b>Brand icons</b><br>
                         <b>Icons</b><br>
                         <b>Localization</b>`,
-            modalTab: '2'
+            modalTab: '1'
           }, () => { this.toggleModal() } )
           break;
         case 'class':
@@ -557,7 +557,7 @@ class App extends Component {
                         Don't forget about <a style='font-size: 115%' target='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/animations'>Animations</a> and 
                           <a style='font-size: 115%' target='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/typography'>Typography</a>!</span><br>
                         <br>`,
-            modalTab: '2'
+            modalTab: '1'
           }, () => { this.toggleModal() } )
           break;
           

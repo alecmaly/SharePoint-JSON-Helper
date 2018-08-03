@@ -25,6 +25,11 @@ class MyModal extends Component {
         }
     }
 
+    componentWillReceiveProps() {
+        this.setState({
+            activeTab: this.props.modalTab
+        });
+    }
 
     handleKeyDown(key) {
         if (key.keyCode === 13 || key.keyCode === 27) {
