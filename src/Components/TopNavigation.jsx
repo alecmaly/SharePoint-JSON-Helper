@@ -116,7 +116,7 @@ class TopNavigation extends Component {
                                     <DropdownItem header>
                                         App Specific
                                     </DropdownItem>
-                                    <DropdownItem target='_blank' href='https://www.youtube.com'>
+                                    <DropdownItem target='_blank' href='https://www.youtube.com/watch?v=ddlkiR1O4E0'>
                                         YouTube Tutorial
                                     </DropdownItem>
                                     <DropdownItem target='_blank' href='https://github.com/alecjmaly/SharePoint-JSON-Helper'>
