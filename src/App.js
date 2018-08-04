@@ -549,12 +549,11 @@ class App extends Component {
           this.setState({
             modalHeader: 'iconName Help',
             modalBody: `<br>
-                        Use <a style='font-size: 115%' target='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/icons'>THIS</a> link to access available icons.</span><br>
+                        Use SharePoint Fabric <a style='font-size: 115%' target='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/icons'>Icons</a>.</span><br>
                         <br>
                         Don't forget to check the left nav for more icons!<br>
-                        <b>Brand icons</b><br>
-                        <b>Icons</b><br>
-                        <b>Localization</b>`,
+                        <a target='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/brand-icons'><b>Brand icons</b></a><br>
+                        <a targt='_blank' href='https://developer.microsoft.com/en-us/fabric#/styles/localization'><b>Localization</b></a>`,
             modalTab: '1'
           }, () => { this.toggleModal() } )
           break;
