@@ -590,7 +590,7 @@ class App extends Component {
             <Row>  
               <Col>
                 <h1>SharePoint Helper</h1>
-                <p>Used for building conditional formatting JSON - <a target='_blank' href='https://www.youtube.com/watch?v=ddlkiR1O4E0'>YouTube Tutorial</a> <br />
+                <p>Used for building conditional formatting JSON - <a target='_blank' href='https://www.youtube.com/watch?v=6vT4oGr2ZKU'>YouTube Tutorial</a> <br />
                 Note: Rules are read from top to bottom.
                 </p>
               </Col>
