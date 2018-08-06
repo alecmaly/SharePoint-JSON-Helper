@@ -395,6 +395,14 @@ class App extends Component {
   }
 
   parseString(str, indent) {
+
+    // replace '%5F' with '_' inside variable names
+    str = str.replace(/\[\$(.*?)%5F(.*?)\]/g, (match) => 
+      { 
+        return match.replace(/%5F/g, '_') 
+      });
+     
+
     let value = '"' + str + '"';
 
     // parses functions and () order of operations
@@ -513,7 +521,7 @@ class App extends Component {
     JSON_Footer = `\n}`; 
 
     // build body of properties and attributes
-    JSON_Body = JSON_Properties + ",\n" + JSON_Attributes + ",\n" + JSON_CustomRowActions ;
+    JSON_Body = JSON_Attributes + ",\n" + JSON_Properties + ",\n" + JSON_CustomRowActions ;
 
     // Set Output
     this.setState({

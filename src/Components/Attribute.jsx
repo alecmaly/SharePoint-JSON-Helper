@@ -127,7 +127,7 @@ class Attribute extends Component {
                             <DropdownToggle color='primary' caret></DropdownToggle>
                             <DropdownMenu>
                                 {Object.keys(this.props.attributeChoices).map((key, i) => {
-                                    return (<DropdownItem name='property' onClick={ this.handleInputChange } key={i}>{key}</DropdownItem>);
+                                    return (<DropdownItem name='property' style={{'backgroundColor': (this.state.property !== '' && key.includes(this.state.property) ? '#FFFBCC' : 'transparent')}} onClick={ this.handleInputChange } key={i}>{key}</DropdownItem>);
                                 })}
                             </DropdownMenu>
                         </InputGroupButtonDropdown>
