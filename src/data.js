@@ -58,40 +58,43 @@ export default {
         'Purple': '#B350FF',
         'Custom': '#'
     },
-    template_completedInProgressLate: [
-        {
-          property: 'background-color',
-          value:  [
+    template_completedInProgressLate: {
+        properties: [
             {
-              operator: '==',
-              operand: '@currentField',
-              operand2: 'Completed',
-              value: '#98fb98'
-            },
-            {
-              operator: '==',
-              operand: '@currentField',
-              operand2: 'In Progress',
-              value: '#FFFF66'
-            },
-            {
-              operator: '==',
-              operand: '@currentField',
-              operand2: 'Late',
-              value: '#ff6a6a'
+                name: 'background-color',
+                value:  [
+                    {
+                        operator: '==',
+                        operand: '@currentField',
+                        operand2: 'Completed',
+                        value: '#98fb98'
+                    },
+                    {
+                        operator: '==',
+                        operand: '@currentField',
+                        operand2: 'In Progress',
+                        value: '#FFFF66'
+                    },
+                    {
+                        operator: '==',
+                        operand: '@currentField',
+                        operand2: 'Late',
+                        value: '#ff6a6a'
+                    }
+                ]
             }
-          ]
-        }],
+        ]
+    },
         template_dataBars_one: {
             attributes: [
                 {
-                    attribute: 'class',
+                    name: 'class',
                     value: 'sp-field-dataBars'
                 }
             ],
             properties: [
                 {
-                    property: 'width',
+                    name: 'width',
                     value: 'Number(@currentField)**Number(100)++%'
                 }
             ]
@@ -99,13 +102,13 @@ export default {
         template_dataBars_hundred: {
             attributes: [
                 {
-                    attribute: 'class',
+                    name: 'class',
                     value: 'sp-field-dataBars'
                 }
             ],
             properties: [
                 {
-                    property: 'width',
+                    name: 'width',
                     value: '@currentField++%'
                 }
             ]

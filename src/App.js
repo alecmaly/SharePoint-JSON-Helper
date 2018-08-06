@@ -11,7 +11,6 @@ import Condition from './Components/Condition.jsx';
 import MyModal from './Components/MyModal.jsx';
 
 
-
 // polyfill for .repeat function in IE11
 import './pollyfills.js';
 
@@ -47,34 +46,28 @@ class App extends Component {
     this.buildKey = this.buildKey.bind(this);
     this.deleteKey = this.deleteKey.bind(this);
     this.clearAllKeys = this.clearAllKeys.bind(this);
-    this.newAttribute = this.newAttribute.bind(this);
-    this.updateAttribute = this.updateAttribute.bind(this);
-    this.deleteAttribute = this.deleteAttribute.bind(this);
-    this.buildAttributes = this.buildAttributes.bind(this);
-    this.clearAllAttributes = this.clearAllAttributes.bind(this);
-    this.newProperty = this.newProperty.bind(this);
-    this.updateProperty = this.updateProperty.bind(this);
-    this.deleteProperty = this.deleteProperty.bind(this);
-    this.buildProperties = this.buildProperties.bind(this);
-    this.clearAllProperties = this.clearAllProperties.bind(this);
-    this.validParen = this.validParen.bind(this);
-    this.parseString = this.parseString.bind(this);
-    this.parseFunctions = this.parseFunctions.bind(this);
-    this.parseMathOperations = this.parseMathOperations.bind(this);
-    this.buildValue = this.buildValue.bind(this);
-    this.buildJSON = this.buildJSON.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.resetForm = this.resetForm.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.displayModal = this.displayModal.bind(this);
 
+    this.buildJSON = this.buildJSON.bind(this);
+    // helper functions for buildJSON()
+    this.buildValue = this.buildValue.bind(this);
+    this.parseString = this.parseString.bind(this);
+    this.parseFunctions = this.parseFunctions.bind(this);
+    this.parseMathOperations = this.parseMathOperations.bind(this);
+    this.validParen = this.validParen.bind(this);
+    
+
     //temp
+    this.updateAttribute = this.updateAttribute.bind(this);
+    this.updateProperty = this.updateProperty.bind(this);
     this.updateCRA = this.updateCRA.bind(this);
     // end temp
 
 
     this.state = {
-      rules: [],
       attributes: [],
       properties: [],
       customRowActions: [],
@@ -100,14 +93,13 @@ class App extends Component {
   newKey(key) {
     var arr = this.state[key].slice();
 
-    arr.splice(0,0, {[key]: '', 'value':[]});
+    arr.splice(0,0, {'name': '', 'value':[]});
     this.buildKey(key, arr);
   }
 
   updateKey(key, index, prop, value) {
     var arr = this.state[key].slice();
-    arr[index] = ({[key]: prop, 'value': value});
-
+    arr[index] = ({'name': prop, 'value': value});
     this.setState({
       [key]: arr
     }, () => { this.buildJSON() });
@@ -119,10 +111,21 @@ class App extends Component {
     }, () => { this.buildJSON() } );
   }
 
+  // This function builds properties from arr input. 
+  // Needed to build this way for state to reset properly.
+  updateAttribute(index, key, value) {
+    this.updateKey('attributes', index, key, value);
+  }
+
+  updateProperty(index, key, value) {
+    this.updateKey('properties', index, key, value);
+  }
+
   updateCRA(index, prop, value) {
     this.updateKey('customRowActions', index, prop, value);
   }
 
+  
   buildKey(key, arr) {
     this.setState({
       [key]: []
@@ -135,6 +138,7 @@ class App extends Component {
 
   deleteKey(key, index) {
     var arr = this.state[key].slice();
+
     var deleteAtt = arr[index];
     arr.splice(index, 1);
     this.setState({
@@ -146,63 +150,6 @@ class App extends Component {
      });
   }
 
-  newAttribute() {
-    var arr = this.state.attributes.slice();
-    arr.splice(0,0, {'attribute': '', 'value':[]});
-    this.buildAttributes(arr);
-  }
-  
-  buildAttributes(arr) {
-    this.setState({
-      attributes: []
-    }, () => { 
-      this.setState({
-        attributes: arr
-      }, () => { this.buildJSON() });
-     });
-  }
-
-  updateAttribute(index, prop, value) {
-    var arr = this.state.attributes.slice();
-    arr[index] = ({'attribute': prop, 'value': value});
-
-    this.setState({
-      attributes: arr
-    }, () => { this.buildJSON() });
-  }
-
-  deleteAttribute(index) {
-    var arr = this.state.attributes.slice();
-    var deleteAtt = arr[index];
-    arr.splice(index, 1);
-    this.setState({
-      attributes: []
-    }, () => { 
-      this.setState({
-        attributes: arr
-      }, () => { this.buildJSON() });
-     });
-  }
-
-  clearAllAttributes() {
-    this.setState({
-      attributes: []
-    }, () => { this.buildJSON() } );
-  }
-
-  
-
-  // This function builds properties from arr input. 
-  // Needed to build this way for state to reset properly.
-  buildProperties(arr) {
-    this.setState({
-      properties: []
-    }, () => { 
-      this.setState({
-        properties: arr
-      }, () => { this.buildJSON() });
-     });
-  }
 
   navButtonClick(event) {
     let arr = [];
@@ -222,18 +169,18 @@ class App extends Component {
         break;
       case 'attribute':
          arr = this.state.attributes.slice();
-        arr.splice(0, 0, {'attribute': event.target.value, 'value': event.target.title});
-        this.buildAttributes(arr);
+        arr.splice(0, 0, {'name': event.target.value, 'value': event.target.title});
+        this.buildKey('attributes', arr);
         break;
       case 'property':
         arr = this.state.properties.slice();
-        arr.splice(0, 0, {'property': event.target.value, 'value': event.target.title});
-        this.buildProperties(arr);
+        arr.splice(0, 0, {'name': event.target.value, 'value': event.target.title});
+        this.buildKey('properties', arr);
         break;
       case 'CRA':
         arr = this.state.customRowActions.slice();
-        arr.splice(0, 0, {'customRowActions': "actionParams", 'value': "{\\\"id\\\": \\\"FLOW_ID\\\"}"});
-        arr.splice(0, 0, {'customRowActions': "action", 'value': "executeFlow"});
+        arr.splice(0, 0, {'name': "actionParams", 'value': "{\\\"id\\\": \\\"FLOW_ID\\\"}"});
+        arr.splice(0, 0, {'name': "action", 'value': "executeFlow"});
         this.buildKey('customRowActions', arr);
         break;
         
@@ -244,69 +191,36 @@ class App extends Component {
           case 'Completed/In Progress/Late':
             this.resetForm();
             arr = data.template_completedInProgressLate;
-            this.buildProperties(arr);
+            this.buildKey('properties', arr.properties);
             break;
           case 'Data Bars 1':
               this.resetForm();
               arr = data.template_dataBars_one;
               
-              this.buildProperties(arr.properties);
-              this.buildAttributes(arr.attributes);
+              this.buildKey('properties', arr.properties);
+              this.buildKey('attributes', arr.attributes);
               break;
           case 'Data Bars 100':
             this.resetForm();
             arr = data.template_dataBars_hundred;
             
-            this.buildProperties(arr.properties);
-            this.buildAttributes(arr.attributes);
+            this.buildKey('properties', arr.properties);
+            this.buildKey('attributes', arr.attributes);
             break;
         }
-
     }
   }
 
   resetForm() {
     this.setState({
+      elmType: 'div',
       fieldType: 'Choice',
       textContent: '@currentField'
     });
-    this.clearAllProperties();
-    this.clearAllAttributes();
+    this.clearAllKeys('attributes');
+    this.clearAllKeys('properties');
     this.clearAllKeys('customRowActions');
-  }
-
-  newProperty() {
-    var arr = this.state.properties.slice();
-    arr.splice(0,0,{'property': '', 'value':[]});
-    this.buildProperties(arr);
-  }
-
-  updateProperty(index, prop, value) {
-    var arr = this.state.properties.slice();
-    arr[index] = ({'property': prop, 'value': value});
-
-    this.setState({
-      properties: arr
-    }, () => { this.buildJSON() });
-  }
-
-  deleteProperty(index) {
-    var arr = this.state.properties.slice();
-    var deleteProp = arr[index];
-    arr.splice(index, 1);
-    this.setState({
-      properties: []
-    }, () => { 
-      this.setState({
-        properties: arr
-      }, () => { this.buildJSON() });
-     });
-  }
-
-  clearAllProperties() {
-    this.setState({
-      properties: []
-    }, () => { this.buildJSON() } );
+    window.scrollTo(0, 0);  // scroll to top of screen
   }
 
 
@@ -325,9 +239,7 @@ class App extends Component {
                         // remove , from last item in list and add closing brackets
           value = '{\n' + temp_value.slice(0,-2) + (str.toString().split(operator.charAt(1)).length === 1 ? ',\n' + '\t'.repeat(indent + 1) + '""' : '') + '\n' + '\t'.repeat(indent) +  ']\n}'; 
         } 
-
     }
-
   
     return value;
   }
@@ -336,7 +248,6 @@ class App extends Component {
     let f = '';
     let value = str;
     let acceptedFunctions = ['toString', 'Number', 'Date', 'cos', 'sin', 'toLocaleString', 'toLocaleDateString', 'toLocaleTimeString']; 
-    
     
     // set index to innermost '('
     let index = str.lastIndexOf('(');
@@ -366,18 +277,11 @@ class App extends Component {
       let prefix = '\t'.repeat(++indent) + '"operator": "' + f + '()",\n' + '\t'.repeat(++indent) + ' "operands": [\n';
       
       str =  this.parseString(inner, indent);//this.parseString(inner, index) + after;   
-      
       str = prefix + str;
       
       value = '{\n' + '\t'.repeat(++indent) + str + '\n' + '\t'.repeat(indent) +  ']\n}';
       value = this.parseString(before + '~' + after, indent).replace('~', value);
     }
-
-    // fails:   Number((Number(4)++Number(4))//Number(5))
-
-  
-
-    // Number(toString(3++3)++4)++10
 
     return value;
   }
@@ -432,11 +336,11 @@ class App extends Component {
     let output = '';
     let key = '';
     switch (type) {
-      case 'property':
-        output = '\t'.repeat(indent)  + '"style": {';
-        break;
       case 'attribute':
         output = '\t'.repeat(indent) + '"attributes": {';
+        break;
+      case 'property':
+        output = '\t'.repeat(indent)  + '"style": {';
         break;
       case 'customRowActions':
         output = output = '\t'.repeat(indent) + '"customRowAction": {';
@@ -449,16 +353,16 @@ class App extends Component {
       let value = '';
       
       // FIX: CHANGE ele.attribute => ele.name when changing
-      if (!(ele.attribute === 'class' || ele.attribute === 'iconName')) {
-        if (typeof ele.value === 'string') {
+      if (typeof ele.value === 'string') {
+        if (!(ele.name === 'class' || ele.name === 'iconName')) {
           value = this.parseString(ele.value, indent);
+        } else {
+          value = '"' + ele.value + '"';
         }
-      } else {
-        value = '"' + ele.value + '"';
       }
       // craft value
       output = output + `
-      "` + ele[type] + '": ' + value;
+      "` + ele.name + '": ' + value;
       
       if (typeof ele.value === 'object') {   
         // false
@@ -545,6 +449,7 @@ class App extends Component {
   }
 
   displayModal(event) {
+    console.log(event.target.attributes.value.value);
     switch(event.target.attributes.value.value) {
       case 'text content help':
         this.setState({
@@ -576,7 +481,20 @@ class App extends Component {
             modalTab: '1'
           }, () => { this.toggleModal() } )
           break;
-          
+        case 'Operand':
+          this.setState({
+            modalHeader: 'Operand Help',
+            modalBody: '<br>This value will be compared with Operand2, uses Value when true.',
+            modalTab: '1'
+          }, () => { this.toggleModal() } )
+          break;
+        case 'Operand2':
+          this.setState({
+            modalHeader: 'Operand Help',
+            modalBody: '<br>This value will be compared with Operand, uses Value when true.',
+            modalTab: '1'
+          }, () => { this.toggleModal() } )
+          break;
 
         default:
           this.setState({
@@ -663,16 +581,16 @@ class App extends Component {
           <Col>
             <Row className='padded-row'>
               <div className='center-input'>
-                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={this.newAttribute}>New Attribute</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('attributes')}>New Attribute</Button>
               </div>
               <div className='center-input'>
-                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.attributes.length > 0 ? 'Visible' : 'hidden'}} onClick={this.clearAllAttributes}>Clear All Attributes</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.attributes.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('attributes')}>Clear All Attributes</Button>
               </div>
             
             </Row>
             <Row>
               {Object.keys(this.state.attributes).map((key, i) => {
-                return (<Attribute key={i} index={i} name='' colors={this.state.colors} attributes={this.state.attributes} attributeChoices={this.state.attributeChoices} updateAttribute={this.updateAttribute} deleteAttribute={this.deleteAttribute} buildJSON={this.buildJSON} displayModal={this.displayModal} />)
+                return (<Attribute key={i} index={i} name='' colors={this.state.colors} attributes={this.state.attributes} attributeChoices={this.state.attributeChoices} updateAttribute={this.updateAttribute} deleteKey={this.deleteKey} buildJSON={this.buildJSON} displayModal={this.displayModal} />)
               })}
             </Row>
             
@@ -694,16 +612,16 @@ class App extends Component {
           <Col>
             <Row className='padded-row'>
               <div className='center-input'>
-                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={this.newProperty}>New CSS Property</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('properties')}>New CSS Property</Button>
               </div>
               <div className='center-input'>
-                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.properties.length > 0 ? 'Visible' : 'hidden'}} onClick={this.clearAllProperties}>Clear All CSS Properties</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.properties.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('properties')}>Clear All CSS Properties</Button>
               </div>
             
             </Row>
             <Row>
               {Object.keys(this.state.properties).map((key, i) => {
-                return (<Property key={i} index={i} name='' colors={this.state.colors} properties={this.state.properties} propertyChoices={this.state.propertyChoices} updateProperty={this.updateProperty} deleteProperty={this.deleteProperty} buildJSON={this.buildJSON} displayModal={this.displayModal} />)
+                return (<Property key={i} index={i} name='' colors={this.state.colors} properties={this.state.properties} nameChoices={this.state.propertyChoices} updateProperty={this.updateProperty} deleteKey={this.deleteKey} buildJSON={this.buildJSON} displayModal={this.displayModal} />)
               })}
             </Row>
             

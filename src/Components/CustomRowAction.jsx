@@ -25,10 +25,10 @@ class customRowAction extends Component {
         this.toggleValueDropdownOpen = this.toggleValueDropdownOpen.bind(this);
         this.toggleConditionals = this.toggleConditionals.bind(this);
         this.state = {
-            property: this.props.customRowActions[this.props.index].customRowActions,
+            key: this.props.customRowActions[this.props.index].name,
             value: this.props.customRowActions[this.props.index].value,
             conditionalFlag: (typeof this.props.customRowActions[this.props.index].value === 'object' && this.props.customRowActions[this.props.index].value.length ? true : false), // True if rules have been defined, otherwise false
-            propertyDropdownOpen: false,
+            keyDropdownOpen: false,
             valueDropdownOpen: false,
             prevIndex: this.props.index
         };
@@ -37,10 +37,10 @@ class customRowAction extends Component {
     componentDidUpdate() {
         if (this.state.prevIndex !== this.props.index) {
             this.setState({
-                property: this.props.customRowActions[this.props.index].customRowActions,
+                key: this.props.customRowActions[this.props.index].name,
                 value: this.props.customRowActions[this.props.index].value,
                 conditionalFlag: (typeof this.props.customRowActions[this.props.index].value === 'object' && this.props.customRowActions[this.props.index].value.length ? true : false), // True if rules have been defined, otherwise false
-                propertyDropdownOpen: false,
+                keyDropdownOpen: false,
                 valueDropdownOpen: false,
                 prevIndex: this.props.index
             }, () => { this.props.buildJSON() });
@@ -61,7 +61,7 @@ class customRowAction extends Component {
         this.setState({
             conditionalFlag: !this.state.conditionalFlag,
             value: []
-        }, () => { this.props.updateCRA(this.props.index, this.state.property, this.state.value) });
+        }, () => { this.props.updateCRA(this.props.index, this.state.key, this.state.value) });
     }
 
     handleInputChange(event) {
@@ -69,7 +69,7 @@ class customRowAction extends Component {
         const name = target.name;
         
         let resetValue = '';
-        if (name === 'property') {
+        if (name === 'key') {
             let value = target.type === 'button' ? target.innerHTML : target.value;
             resetValue = [];
             this.setState({
@@ -78,12 +78,12 @@ class customRowAction extends Component {
               }, () => { this.props.updateCRA(this.props.index, value, '') }) 
               
         } else {
-            let value = target.type === 'button' ? ( this.state.property === 'background-color' ? this.props.colors[target.innerHTML] : target.innerHTML) : target.value;
+            let value = target.type === 'button' ? ( this.state.key === 'background-color' ? this.props.colors[target.innerHTML] : target.innerHTML) : target.value;
             resetValue = value;
             this.setState({
                 [name]: value,
                 value: resetValue
-              }, () => { this.props.updateCRA(this.props.index, this.state.property, this.state.value) })       
+              }, () => { this.props.updateCRA(this.props.index, this.state.key, this.state.value) })       
         }
 
     }
@@ -97,7 +97,7 @@ class customRowAction extends Component {
     toggleAttributeDropdownOpen() {
         this.setState({
             value: '',
-            propertyDropdownOpen: !this.state.propertyDropdownOpen
+            keyDropdownOpen: !this.state.keyDropdownOpen
         });
     }
 
@@ -120,12 +120,12 @@ class customRowAction extends Component {
                 <Col sm='12' md='5'>
                     <Label className='label remove-text-highlighting'>Custom Row Action</Label>
                     <InputGroup>   
-                        <Input className='center-input' type='text' name='property' value={this.state.property} onChange={this.handleInputChange} />
-                        <InputGroupButtonDropdown addonType='append' isOpen={this.state.propertyDropdownOpen} toggle={this.toggleAttributeDropdownOpen}>
+                        <Input className='center-input' type='text' name='key' value={this.state.key} onChange={this.handleInputChange} />
+                        <InputGroupButtonDropdown addonType='append' isOpen={this.state.keyDropdownOpen} toggle={this.toggleAttributeDropdownOpen}>
                             <DropdownToggle color='primary' caret></DropdownToggle>
                             <DropdownMenu>
                                 {Object.keys(this.props.customRowActionChoices).map((key, i) => {
-                                    return (<DropdownItem name='property' style={{'backgroundColor': (this.state.property !== '' && key.includes(this.state.property) ? '#FFFBCC' : 'transparent')}} onClick={ this.handleInputChange } key={i}>{key}</DropdownItem>);
+                                    return (<DropdownItem name='key' style={{'backgroundColor': (this.state.key !== '' && key.includes(this.state.key) ? '#FFFBCC' : 'transparent')}} onClick={ this.handleInputChange } key={i}>{key}</DropdownItem>);
                                 })}
                             </DropdownMenu>
                         </InputGroupButtonDropdown>
@@ -135,17 +135,17 @@ class customRowAction extends Component {
                 <Col sm='12' md='5'>
                     {!this.state.conditionalFlag ? 
                         <div>
-                            <Label className='label remove-text-highlighting'>Value<span style={{'visibility': (this.state.property === 'background-color' || this.state.property ==='color') ? 'visible' : 'hidden' }}> (<a target='_blank' href='https://www.w3schools.com/colors/colors_picker.asp'>help</a>)</span></Label>
+                            <Label className='label remove-text-highlighting'>Value<span style={{'visibility': (this.state.key === 'background-color' || this.state.key ==='color') ? 'visible' : 'hidden' }}> (<a target='_blank' href='https://www.w3schools.com/colors/colors_picker.asp'>help</a>)</span></Label>
                             <InputGroup>   
-                                <Input className='center-input wrap-value' type='textarea' name='value' placeholder={  this.props.customRowActionChoices[this.state.property] !== undefined && this.props.customRowActionChoices[this.state.property].placeholder !== undefined ? this.props.customRowActionChoices[this.state.property].placeholder : '' } value={this.state.value} onChange={this.handleInputChange} />
+                                <Input className='center-input wrap-value' type='textarea' name='value' placeholder={  this.props.customRowActionChoices[this.state.key] !== undefined && this.props.customRowActionChoices[this.state.key].placeholder !== undefined ? this.props.customRowActionChoices[this.state.key].placeholder : '' } value={this.state.value} onChange={this.handleInputChange} />
                                 <InputGroupButtonDropdown addonType='append' isOpen={this.state.valueDropdownOpen} toggle={this.toggleValueDropdownOpen}
-                                style={{ 'visibility': ((this.props.customRowActionChoices[this.state.property] === undefined || this.props.customRowActionChoices[this.state.property].options === undefined) && this.state.property !== 'background-color' ?  'hidden' : 'visible') }}>
+                                style={{ 'visibility': ((this.props.customRowActionChoices[this.state.key] === undefined || this.props.customRowActionChoices[this.state.key].options === undefined) && this.state.key !== 'background-color' ?  'hidden' : 'visible') }}>
                                     <DropdownToggle color='primary' caret></DropdownToggle>
                                     <DropdownMenu>
-                                        { (this.props.customRowActionChoices[this.state.property] !== undefined && this.props.customRowActionChoices[this.state.property].options !== undefined
-                                            ? this.props.customRowActionChoices[this.state.property].options.split(',').map((key, i) => {
+                                        { (this.props.customRowActionChoices[this.state.key] !== undefined && this.props.customRowActionChoices[this.state.key].options !== undefined
+                                            ? this.props.customRowActionChoices[this.state.key].options.split(',').map((key, i) => {
                                                 return (<DropdownItem name='value' onClick={ this.handleInputChange } key={i}>{key}</DropdownItem>);
-                                        }) : (this.state.property === 'background-color' ? Object.keys(this.props.colors).map((key, i) => {
+                                        }) : (this.state.key === 'background-color' ? Object.keys(this.props.colors).map((key, i) => {
                                             return (<DropdownItem name='value' onClick={ this.handleInputChange } key={i}>{key}</DropdownItem>);
                                         })
                                         : '') )}
@@ -162,7 +162,7 @@ class customRowAction extends Component {
                 </div>
             </Row>
         
-            {this.state.conditionalFlag ? <Condition index={this.props.index} rules={this.state.value} property={this.state.property} propertyChoices={this.props.customRowActionChoices} updateProperty={this.props.updateCRA} setValue={this.setValue} buildJSON={this.props.buildJSON} colors={this.props.colors} displayModal={this.props.displayModal} /> : ''}
+            {this.state.conditionalFlag ? <Condition index={this.props.index} rules={this.state.value} name={this.state.key} nameChoices={this.props.customRowActionChoices} updateKey={this.props.updateCRA} setValue={this.setValue} buildJSON={this.props.buildJSON} colors={this.props.colors} displayModal={this.props.displayModal} /> : ''}
    
             </Container>
         )

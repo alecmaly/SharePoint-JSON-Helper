@@ -51,7 +51,7 @@ class Condition extends Component {
         this.setState({
           rules: arr,
           value: ''
-        }, () => { this.props.updateProperty(this.props.index, this.props.property, this.state.rules) });    
+        }, () => { this.props.updateKey(this.props.index, this.props.name, this.state.rules) });    
         this.props.setValue(arr);
     }
     
@@ -87,7 +87,7 @@ class Condition extends Component {
         this.props.setValue(arr);
         this.setState({
           rules: arr
-        }, () => { this.props.updateProperty(this.props.index, this.props.property, this.state.rules) });    
+        }, () => { this.props.updateKey(this.props.index, this.props.name, this.state.rules) });    
 
     }
 
@@ -103,7 +103,7 @@ class Condition extends Component {
             operand2: '',
             value: deleted_Value,
             selectedRule: ''
-          }, () => { this.props.updateProperty(this.props.index, this.props.property, this.state.rules) });
+          }, () => { this.props.updateKey(this.props.index, this.props.name, this.state.rules) });
         }
       }
 
@@ -114,12 +114,12 @@ class Condition extends Component {
             operand: '@currentField',
             operand2: '',
             selectedRule: ''
-        }, () => { this.props.updateProperty(this.props.index, this.props.property, this.state.rules) });
+        }, () => { this.props.updateKey(this.props.index, this.props.name, this.state.rules) });
     }
 
     handleInputChange(event) {
         const target = event.target;
-        let value = target.type === 'button' ? ( this.props.property === 'background-color' ? this.props.colors[target.innerHTML] : target.innerHTML) : target.value;
+        let value = target.type === 'button' ? ( this.props.name === 'background-color' ? this.props.colors[target.innerHTML] : target.innerHTML) : target.value;
         const name = target.name;
         this.setState({
           [name]: value,
@@ -139,7 +139,7 @@ class Condition extends Component {
             <Col>
                 <Row>
                     <Col sm='3'>
-                        <Label className='label remove-text-highlighting'>Operand <span class='help-link' value="text content help" onClick={this.props.displayModal}>(help)</span></Label>
+                        <Label className='label remove-text-highlighting'>Operand <span class='help-link' value="Operand" onClick={this.props.displayModal}>(help)</span></Label>
                         <Input className='operand center-input' type='text' name='operand' placeholder='Compare to' value={this.state.operand} onChange={this.handleInputChange} />
                     </Col>
                     <Col sm='2'>
@@ -154,23 +154,23 @@ class Condition extends Component {
                         </Input>  
                     </Col>
                     <Col sm='3'>
-                        <Label className='label remove-text-highlighting'>Operand2 <span class='help-link' value="text content help" onClick={this.props.displayModal}>(help)</span></Label>
+                        <Label className='label remove-text-highlighting'>Operand2 <span class='help-link' value="Operand2" onClick={this.props.displayModal}>(help)</span></Label>
                         <Input className='operand center-input' type='text' name='operand2' placeholder='Compare to' value={this.state.operand2} onChange={this.handleInputChange} />
                     </Col>
                     <Col sm='4'>
-                        <Label className='label remove-text-highlighting'>Value <span class='help-link' value={this.props.property} onClick={this.props.displayModal}>(help)</span></Label>
+                        <Label className='label remove-text-highlighting'>Value <span class='help-link' value={this.props.name} onClick={this.props.displayModal}>(help)</span></Label>
                         <InputGroup>   
-                            <Input className='center-input' type='text' name='value' style={ { [this.props.property] : this.state.value} } 
-                                placeholder={  this.props.propertyChoices[this.props.property] !== undefined && this.props.propertyChoices[this.props.property].placeholder !== undefined ? this.props.propertyChoices[this.props.property].placeholder : '' } value={this.state.value} onChange={this.handleInputChange} />
+                            <Input className='center-input' type='text' name='value' style={ { [this.props.name] : this.state.value} } 
+                                placeholder={  this.props.nameChoices[this.props.name] !== undefined && this.props.nameChoices[this.props.name].placeholder !== undefined ? this.props.nameChoices[this.props.name].placeholder : '' } value={this.state.value} onChange={this.handleInputChange} />
                             <InputGroupButtonDropdown addonType='append' isOpen={this.state.valueDropdownOpen} toggle={this.toggleValueDropdownOpen}
-                            style={{ 'visibility': ((this.props.propertyChoices[this.props.property] === undefined || this.props.propertyChoices[this.props.property].options === undefined) && this.props.property !== 'background-color' ?  'hidden' : 'visible') }}>
+                            style={{ 'visibility': ((this.props.nameChoices[this.props.name] === undefined || this.props.nameChoices[this.props.name].options === undefined) && this.props.name !== 'background-color' ?  'hidden' : 'visible') }}>
                                 <DropdownToggle color='primary' caret></DropdownToggle>
                                 <DropdownMenu>
                                     
-                                    { (this.props.propertyChoices[this.props.property] !== undefined && this.props.propertyChoices[this.props.property].options !== undefined
-                                        ? this.props.propertyChoices[this.props.property].options.split(',').map((key, i) => {
+                                    { (this.props.nameChoices[this.props.name] !== undefined && this.props.nameChoices[this.props.name].options !== undefined
+                                        ? this.props.nameChoices[this.props.name].options.split(',').map((key, i) => {
                                             return (<DropdownItem name='value' onClick={ this.handleInputChange } key={i}>{key}</DropdownItem>);
-                                    }) : (this.props.property === 'background-color' ? Object.keys(this.props.colors).map((key, i) => {
+                                    }) : (this.props.name === 'background-color' ? Object.keys(this.props.colors).map((key, i) => {
                                         return (<DropdownItem name='value' onClick={ this.handleInputChange } key={i}>{key}</DropdownItem>);
                                     })
                                     : '') )}
@@ -191,8 +191,8 @@ class Condition extends Component {
                     <Container fluid>
                         <Row>
                             <Col>
-                                <Label className='label remove-text-highlighting'>Condtions ({this.props.property})<br />{this.state.selectedRule === '' ? '*Click to Select*' : '*Click to Deselect*'}</Label>
-                                <CurrentRules className='center-input' property={this.props.property} rules={this.props.rules} selectRule={this.selectRule} selectedRule={this.state.selectedRule} />
+                                <Label className='label remove-text-highlighting'>Condtions ({this.props.name})<br />{this.state.selectedRule === '' ? '*Click to Select*' : '*Click to Deselect*'}</Label>
+                                <CurrentRules className='center-input' name={this.props.name} rules={this.props.rules} selectRule={this.selectRule} selectedRule={this.state.selectedRule} />
                             </Col>
                         </Row>
                         <Row>
