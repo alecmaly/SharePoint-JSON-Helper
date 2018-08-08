@@ -4,8 +4,9 @@ import './App.css';
 import TopNavigation from './Components/TopNavigation.jsx';
 import BottomNavigation from './Components/BottomNavigation.jsx';
 import CurrentRules from './Components/CurrentRules.jsx';
-import Property from './Components/Property.jsx';
 import Attribute from './Components/Attribute.jsx';
+import Property from './Components/Property.jsx';
+import Children from './Components/Children.jsx';
 import CustomRowAction from './Components/CustomRowAction.jsx';
 import Condition from './Components/Condition.jsx';
 import MyModal from './Components/MyModal.jsx';
@@ -50,6 +51,7 @@ class App extends Component {
     this.resetForm = this.resetForm.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.displayModal = this.displayModal.bind(this);
+    this.moveChild = this.moveChild.bind(this);
 
     this.buildJSON = this.buildJSON.bind(this);
     // helper functions for buildJSON()
@@ -64,6 +66,7 @@ class App extends Component {
     this.updateAttribute = this.updateAttribute.bind(this);
     this.updateProperty = this.updateProperty.bind(this);
     this.updateCRA = this.updateCRA.bind(this);
+    this.updateChildren = this.updateChildren.bind(this);
     // end temp
 
 
@@ -71,6 +74,7 @@ class App extends Component {
       attributes: [],
       properties: [],
       customRowActions: [],
+      children: [],
       JSON: '',
       elmType: 'div',
       fieldType: 'Choice',
@@ -90,16 +94,60 @@ class App extends Component {
     this.buildJSON();
   }
 
-  newKey(key) {
-    var arr = this.state[key].slice();
 
-    arr.splice(0,0, {'name': '', 'value':[]});
+  moveChild(ele, index, obj) {
+    let arr = this.state.children.slice();
+    let temp = arr[index];
+    
+
+    switch (ele.target.attributes.value.value) {
+      case 'top':
+        arr.splice(index, 1);    
+        arr.splice(0, 0, temp);
+        break;
+      case 'up':
+        arr.splice(index, 1);    
+        arr.splice((index === 0 ? 0 : index-1), 0, temp);
+        break;
+      case 'down':
+        arr.splice(index, 1);    
+        arr.splice(index+1, 0, temp);
+        break;
+      case 'bottom':
+        arr.splice(index, 1);    
+        arr.splice(arr.length, 0, temp);
+        break;
+    }
+    //arr.splice(index, 0, temp);
+
+    this.setState({
+      children: arr
+    }, this.buildJSON())
+
+  }
+
+  newKey(key) {
+    let arr = [];
+    if (key === 'addChildren') {
+      key = 'children';
+      arr = this.state[key].slice();
+      arr.push({'name':'', 'value':[]});
+    }
+    else { 
+      arr = this.state[key].slice();
+      console.log(arr);
+      arr.splice(0,0, {'name': '', 'value':[]});
+    }
+
+    if (key === 'children')
+      this.setState({ textContent: '' });
+
     this.buildKey(key, arr);
   }
 
-  updateKey(key, index, prop, value) {
-    var arr = this.state[key].slice();
-    arr[index] = ({'name': prop, 'value': value});
+  updateKey(key, index, name, value) {
+    let arr = this.state[key].slice();
+    arr[index] = ({'name': name, 'value': value});
     this.setState({
       [key]: arr
     }, () => { this.buildJSON() });
@@ -121,8 +169,12 @@ class App extends Component {
     this.updateKey('properties', index, key, value);
   }
 
-  updateCRA(index, prop, value) {
-    this.updateKey('customRowActions', index, prop, value);
+  updateCRA(index, key, value) {
+    this.updateKey('customRowActions', index, key, value);
+  }
+
+  updateChildren(index, key, value) {
+    this.updateKey('children', index, key, value);
   }
 
   
@@ -220,6 +272,7 @@ class App extends Component {
     this.clearAllKeys('attributes');
     this.clearAllKeys('properties');
     this.clearAllKeys('customRowActions');
+    this.clearAllKeys('children');
     window.scrollTo(0, 0);  // scroll to top of screen
   }
 
@@ -301,11 +354,12 @@ class App extends Component {
   parseString(str, indent) {
 
     // replace '%5F' with '_' inside variable names
-    str = str.replace(/\[\$(.*?)%5F(.*?)\]/g, (match) => 
-      { 
-        return match.replace(/%5F/g, '_') 
-      });
-     
+    if (str !== undefined) {
+      str = str.replace(/\[\$(.*?)%5F(.*?)\]/g, (match) => 
+        { 
+          return match.replace(/%5F/g, '_') 
+        });
+    }
 
     let value = '"' + str + '"';
 
@@ -345,56 +399,68 @@ class App extends Component {
       case 'customRowActions':
         output = output = '\t'.repeat(indent) + '"customRowAction": {';
         break;
+      case 'children':
+        output = output = '\t'.repeat(indent) + '"children": [';
+        this.state[type].forEach((obj) => {
+          output = output + obj.value + ', ';
+        });
+        if (this.state[type].length > 0)
+          output = output.slice(0, -2);
+        output = output + ']';
+        break;
     }
+    
+    if (type !== 'children') {
 
-    obj.forEach((ele, i) => {
-      // NEED TO CHECK IF RULES/CONDITIONS ARE APPLIED OR NOT (FIX HERE)
-      // craft value
-      let value = '';
+      obj.forEach((ele, i) => {
+        // NEED TO CHECK IF RULES/CONDITIONS ARE APPLIED OR NOT (FIX HERE)
+        // craft value
+        let value = '';
+        
       
-      // FIX: CHANGE ele.attribute => ele.name when changing
-      if (typeof ele.value === 'string') {
-        if (!(ele.name === 'class' || ele.name === 'iconName')) {
-          value = this.parseString(ele.value, indent);
-        } else {
-          value = '"' + ele.value + '"';
+        if (typeof ele.value === 'string') {
+          if (!(ele.name === 'class' || ele.name === 'iconName')) {
+            value = this.parseString(ele.value, indent);
+          } else {
+            value = '"' + ele.value + '"';
+          }
         }
-      }
-      // craft value
-      output = output + `
-      "` + ele.name + '": ' + value;
-      
-      if (typeof ele.value === 'object') {   
-        // false
-        ele.value.forEach( (condition) => {
-          output = output + `\n
-        {
-          "operator": "?",
-          "operands": [
+
+        // craft value
+        output = output + `
+        "` + ele.name + '": ' + value;
+        
+
+        if (typeof ele.value === 'object') {   
+          ele.value.forEach( (condition) => {
+            output = output + `\n
           {
-              "operator": "` + condition.operator + `",
-              "operands": [
-                  ` + (this.state.fieldType !== 'Number' ? this.parseString(condition.operand, indent) : this.parseString(condition.operand, indent).slice(1, -1)) + `,
-                  ` + (this.state.fieldType !== 'Number' ? this.parseString(condition.operand2, indent) : this.parseString(condition.operand2, indent).slice(1, -1)) + `
-              ]
-          },
-          ` + this.parseString(condition.value, indent) + `, `
-        })
-        // end false
-      }
-      
-      // 
-      output = output + '""'.repeat( (typeof ele.value === 'object' ? 1 : 0) );
-      
-      // add closing brackets based on number of properties being evaluated
-      output = output + `\n\t]
-      }`.repeat( (typeof ele.value === 'string' ? 0 : ele.value.length) );
+            "operator": "?",
+            "operands": [
+            {
+                "operator": "` + condition.operator + `",
+                "operands": [
+                    ` + (this.state.fieldType !== 'Number' ? this.parseString(condition.operand, indent) : this.parseString(condition.operand, indent).slice(1, -1)) + `,
+                    ` + (this.state.fieldType !== 'Number' ? this.parseString(condition.operand2, indent) : this.parseString(condition.operand2, indent).slice(1, -1)) + `
+                ]
+            },
+            ` + this.parseString(condition.value, indent) + `, `
+          })
+        } 
+        
+        // 
+        output = output + '""'.repeat( (typeof ele.value === 'object' ? 1 : 0) );
+        
+        // add closing brackets based on number of properties being evaluated
+        output = output + `\n\t]
+        }`.repeat( (typeof ele.value === 'string' ? 0 : ele.value.length) );
 
-      // add commas for all properties until the last one
-      output = output + ','.repeat( (i !== obj.length - 1 ? 1 : 0) );
-    });
+        // add commas for all properties until the last one
+        output = output + ','.repeat( (i !== obj.length - 1 ? 1 : 0) );
+      });
 
-    output = output + '\n' + '\t'.repeat(indent) + '}';
+      output = output + '\n' + '\t'.repeat(indent) + '}';
+    }
     
     return output;
   }  
@@ -412,7 +478,7 @@ class App extends Component {
     var JSON_Properties = '';
     var JSON_Attributes = '';
     var JSON_CustomRowActions = '';
-    
+    var JSON_Children = '';
     
     // BUILD JSON HERE in forEach loop for ATTRIBUTES
     indent++;
@@ -420,12 +486,13 @@ class App extends Component {
     JSON_Properties = JSON_Properties + this.buildValue('property', this.state.properties, indent);
     JSON_Attributes = JSON_Attributes + this.buildValue('attribute', this.state.attributes, indent);
     JSON_CustomRowActions = JSON_CustomRowActions + this.buildValue('customRowActions', this.state.customRowActions, indent);
+    JSON_Children = JSON_Children + this.buildValue('children', this.state.children, indent);
 
     // JSON Footer 
     JSON_Footer = `\n}`; 
 
     // build body of properties and attributes
-    JSON_Body = JSON_Attributes + ",\n" + JSON_Properties + ",\n" + JSON_CustomRowActions ;
+    JSON_Body = JSON_Attributes + ",\n" + JSON_Properties + ",\n" + JSON_CustomRowActions + ",\n" + JSON_Children ;
 
     // Set Output
     this.setState({
@@ -449,7 +516,6 @@ class App extends Component {
   }
 
   displayModal(event) {
-    console.log(event.target.attributes.value.value);
     switch(event.target.attributes.value.value) {
       case 'text content help':
         this.setState({
@@ -581,10 +647,10 @@ class App extends Component {
           <Col>
             <Row className='padded-row'>
               <div className='center-input'>
-                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('attributes')}>New Attribute</Button>
+                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('attributes')}>New Attribute</Button>
               </div>
               <div className='center-input'>
-                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.attributes.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('attributes')}>Clear All Attributes</Button>
+                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.attributes.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('attributes')}>Clear All Attributes</Button>
               </div>
             
             </Row>
@@ -612,10 +678,10 @@ class App extends Component {
           <Col>
             <Row className='padded-row'>
               <div className='center-input'>
-                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('properties')}>New CSS Property</Button>
+                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('properties')}>New CSS Property</Button>
               </div>
               <div className='center-input'>
-                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.properties.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('properties')}>Clear All CSS Properties</Button>
+                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.properties.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('properties')}>Clear All CSS Properties</Button>
               </div>
             
             </Row>
@@ -636,20 +702,58 @@ class App extends Component {
           <Col>
             <Row className='padded-row'>
               <div className='center-input'>
-                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('customRowActions')}>New Custom Row Action</Button>
+                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('customRowActions')}>New Custom Row Action</Button>
               </div>
               <div className='center-input'>
-                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.customRowActions.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('customRowActions')}>Clear All Custom Row Actions</Button>
+                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.customRowActions.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('customRowActions')}>Clear All Custom Row Actions</Button>
               </div>
             
             </Row>
             <Row>
               {Object.keys(this.state.customRowActions).map((key, i) => {
-                return (<CustomRowAction key={i} index={i} name='' colors={this.state.colors} customRowActions={this.state.customRowActions} customRowActionChoices={this.state.customRowActionChoices} updateCRA={this.updateCRA} deleteKey={this.deleteKey} buildJSON={this.buildJSON} displayModal={this.displayModal} />)
+                return (
+                  <CustomRowAction key={i} index={i} name='' colors={this.state.colors} customRowActions={this.state.customRowActions} customRowActionChoices={this.state.customRowActionChoices} updateCRA={this.updateCRA} deleteKey={this.deleteKey} buildJSON={this.buildJSON} displayModal={this.displayModal} />)
               })}
             </Row>
           </Col>
         </Row>
+
+        
+        {/* Children */}
+        <Row>
+          <Col>
+          {this.state.children.length !== 0 ? 
+            <Row className='padded-row'>
+              <div className='center-input'>
+                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('children')}>Insert Child</Button>
+              </div>
+              <div className='center-input'>
+                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.children.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('children')}>Clear All Children</Button>
+              </div>
+            
+            </Row>
+            : '' }
+
+
+            <Row>
+              {Object.keys(this.state.children).map((key, i) => {
+                return (<Children key={i} index={i} name='' colors={this.state.colors} children={this.state.children} updateChildren={this.updateChildren} deleteKey={this.deleteKey} buildJSON={this.buildJSON} displayModal={this.displayModal} toggleModal={this.toggleModal} moveChild={this.moveChild} />)
+              })}
+            </Row>
+           
+
+            <Row className='padded-row'>
+              <div className='center-input'>
+                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('addChildren')}>New Child</Button>
+              </div>
+              <div className='center-input'>
+                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.children.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('children')}>Clear All Children</Button>
+              </div>
+            </Row>
+            
+          </Col>
+        </Row>
+
 
         <Row className='padded-row'> 
           <Col>

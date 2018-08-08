@@ -232,6 +232,20 @@ body {
   cursor: default;
 }
 
+.child-nav {
+  border: 2px solid rgb(175, 144, 230);
+  background-color: rgb(182, 161, 219);
+  border-radius: 15px;
+  width: 7em;
+
+}
+
+.move-button {
+  width: 10em;
+  border: 2px solid rgb(175, 144, 230);
+  background-color: rgb(182, 161, 219);
+}
+
 .side-info span {
   /* Change to flexbox later */
   top: 50%;
@@ -244,15 +258,24 @@ body {
 }
 
 .properties-color {
+  border-radius: 5px;
   background-color: lightblue;
 }
 
 .attributes-color {
+  border-radius: 5px;
   background-color: lightcoral;
+}
+
+.children-color {
+  border-radius: 10px;
+  background: linear-gradient(ivory, lightpink);
+  background-color: lightpink;
 }
 
 
 .customRowActions-color {
+  border-radius: 5px;
   background-color: lightgreen; 
 }
 

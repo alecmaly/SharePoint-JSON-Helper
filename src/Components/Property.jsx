@@ -26,13 +26,15 @@ class Property extends Component {
         this.togglekeyDropdownOpen = this.togglekeyDropdownOpen.bind(this);
         this.toggleValueDropdownOpen = this.toggleValueDropdownOpen.bind(this);
         this.toggleConditionals = this.toggleConditionals.bind(this);
+        this.moveRule = this.moveRule.bind(this);
         this.state = {
             key: this.props.properties[this.props.index].name,
             value: this.props.properties[this.props.index].value,
             conditionalFlag: (typeof this.props.properties[this.props.index].value === 'object' && this.props.properties[this.props.index].value.length ? true : false), // True if rules have been defined, otherwise false
             keyDropdownOpen: false,
             valueDropdownOpen: false,
-            prevIndex: this.props.index
+            prevIndex: this.props.index,
+            reset: false
         };
     }
 
@@ -56,6 +58,30 @@ class Property extends Component {
             value: obj
         })
     }
+    
+    // called inside Condition component
+    moveRule(ele, index) {
+        let arr = this.state.value.slice();
+        let temp = arr[index];
+    
+        console.log(arr);
+        switch(ele.target.attributes.value.value) {
+            case 'up':
+                arr.splice(index, 1);    
+                arr.splice((index === 0 ? 0 : index-1), 0, temp);
+                break;
+            case 'down':
+                arr.splice(index, 1);    
+                arr.splice(index+1, 0, temp);
+                break;
+        }
+
+
+        this.setState({
+            value: arr
+        }, () => { this.props.updateProperty(this.props.index, this.state.key, this.state.value); });
+    }
+
 
 
     toggleConditionals() {
@@ -167,7 +193,7 @@ class Property extends Component {
                 </div>
             </Row>
         
-            {this.state.conditionalFlag ? <Condition index={this.props.index} rules={this.state.value} name={this.state.key} nameChoices={this.props.nameChoices} updateKey={this.props.updateProperty} setValue={this.setValue} buildJSON={this.props.buildJSON} colors={this.props.colors} displayModal={this.props.displayModal} /> : ''}
+            {this.state.conditionalFlag ? <Condition index={this.props.index} rules={this.state.value} moveRule={this.moveRule} name={this.state.key} nameChoices={this.props.nameChoices} updateKey={this.props.updateProperty} setValue={this.setValue} buildJSON={this.props.buildJSON} colors={this.props.colors} displayModal={this.props.displayModal} reset={this.state.reset} /> : ''}
    
             </Container>
         )

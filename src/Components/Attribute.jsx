@@ -24,6 +24,7 @@ class Attribute extends Component {
         this.toggleAttributeDropdownOpen = this.toggleAttributeDropdownOpen.bind(this);
         this.toggleValueDropdownOpen = this.toggleValueDropdownOpen.bind(this);
         this.toggleConditionals = this.toggleConditionals.bind(this);
+        this.moveRule = this.moveRule.bind(this);
         this.state = {
             key: this.props.attributes[this.props.index].name,
             value: this.props.attributes[this.props.index].value,
@@ -45,10 +46,30 @@ class Attribute extends Component {
                 prevIndex: this.props.index
             }, () => { this.props.buildJSON() });
         }
-
-     
     }
 
+    // called inside Condition component
+    moveRule(ele, index) {
+        let arr = this.state.value.slice();
+        let temp = arr[index];
+    
+        console.log(arr);
+        switch(ele.target.attributes.value.value) {
+            case 'up':
+                arr.splice(index, 1);    
+                arr.splice((index === 0 ? 0 : index-1), 0, temp);
+                break;
+            case 'down':
+                arr.splice(index, 1);    
+                arr.splice(index+1, 0, temp);
+                break;
+        }
+
+
+        this.setState({
+            value: arr
+        }, () => { this.props.updateAttribute(this.props.index, this.state.key, this.state.value) });
+    }
 
 
     setValue(obj) {
@@ -164,7 +185,7 @@ class Attribute extends Component {
                 </div>
             </Row>
         
-            {this.state.conditionalFlag ? <Condition index={this.props.index} rules={this.state.value} name={this.state.key} nameChoices={this.props.attributeChoices} updateKey={this.props.updateAttribute} setValue={this.setValue} buildJSON={this.props.buildJSON} colors={this.props.colors} displayModal={this.props.displayModal} /> : ''}
+            {this.state.conditionalFlag ? <Condition index={this.props.index} rules={this.state.value} moveRule={this.moveRule} name={this.state.key} nameChoices={this.props.attributeChoices} updateKey={this.props.updateAttribute} setValue={this.setValue} buildJSON={this.props.buildJSON} colors={this.props.colors} displayModal={this.props.displayModal} reset={this.state.reset} /> : ''}
    
             </Container>
         )

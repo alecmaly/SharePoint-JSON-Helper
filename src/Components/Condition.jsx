@@ -32,7 +32,8 @@ class Condition extends Component {
             value: '',
             selectedRule: '',
             rules: this.props.rules,
-            valueDropdownOpen: false
+            valueDropdownOpen: false,
+            reset: this.props.reset
         };
     }
 
@@ -41,6 +42,11 @@ class Condition extends Component {
             this.setState({
                 rules: this.props.rules
             })
+
+        if (this.state.reset)
+            this.clearRules;
+
+
     }
 
 
@@ -116,6 +122,8 @@ class Condition extends Component {
             selectedRule: ''
         }, () => { this.props.updateKey(this.props.index, this.props.name, this.state.rules) });
     }
+
+    
 
     handleInputChange(event) {
         const target = event.target;
@@ -197,7 +205,13 @@ class Condition extends Component {
                         </Row>
                         <Row>
                             <Col className='padded-row'>
+                                <Button className='condition-button center-input move-button' value='up' style={this.state.selectedRule === '' ? {'visibility': 'hidden'} : {}} onClick={(ele) => { this.props.moveRule(ele, this.state.selectedRule); this.setState({ selectedRule: (this.state.selectedRule === 0 ? 0 : this.state.selectedRule-1)}); } }>Move Rule Up</Button>
+                            </Col>
+                            <Col className='padded-row'>
                                 <Button className='condition-button center-input' color='danger' style={this.state.selectedRule === '' ? {'visibility': 'hidden'} : {}} onClick={this.deleteRule}>Delete Condition</Button>
+                            </Col>
+                            <Col className='padded-row'>
+                                <Button className='condition-button center-input move-button' value='down' style={this.state.selectedRule === '' ? {'visibility': 'hidden'} : {}} onClick={(ele) => { this.props.moveRule(ele, this.state.selectedRule); this.setState({ selectedRule: (this.state.selectedRule === this.state.rules.length-1 ? this.state.selectedRule : this.state.selectedRule+1)}); }}>Move Rule Down</Button>
                             </Col>
                         </Row>
                     </Container>
