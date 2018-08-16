@@ -130,7 +130,7 @@ class MyModal extends Component {
                     </ModalBody>
                         
                     
-                    <ModalFooter>
+                    <ModalFooter className='display-block'>
                         <Button className='modal-ok-button center-input' type='button' color='info' onClick={this.props.toggleModal}>OK</Button>
                     </ModalFooter>
                 </Modal>

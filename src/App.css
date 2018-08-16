@@ -90,6 +90,10 @@ body {
   max-width: 5em;
 }
 
+.display-block {
+  display: block;
+}
+
 .center-input {
   margin-left: auto;
   margin-right: auto;

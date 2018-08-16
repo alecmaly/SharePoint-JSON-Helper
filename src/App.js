@@ -645,12 +645,12 @@ class App extends Component {
                 <span>Attributes</span>
           </div>
           <Col>
-            <Row className='padded-row'>
+            <Row className='padded-row mx-auto'>
               <div className='center-input'>
-                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('attributes')}>New Attribute</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('attributes')}>New Attribute</Button>
               </div>
               <div className='center-input'>
-                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.attributes.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('attributes')}>Clear All Attributes</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.attributes.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('attributes')}>Clear All Attributes</Button>
               </div>
             
             </Row>
@@ -668,20 +668,13 @@ class App extends Component {
           <div className="side-info properties-color">
                 <span>Properties</span>
           </div>
-
-          
-{/*           
-          <div class='side-info'>
-              <div>Properties</div>
-          </div> */}
-
           <Col>
-            <Row className='padded-row'>
+            <Row className='padded-row mx-auto'>
               <div className='center-input'>
-                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('properties')}>New CSS Property</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('properties')}>New CSS Property</Button>
               </div>
               <div className='center-input'>
-                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.properties.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('properties')}>Clear All CSS Properties</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.properties.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('properties')}>Clear All CSS Properties</Button>
               </div>
             
             </Row>
@@ -700,12 +693,12 @@ class App extends Component {
                 <span>Row Actions</span>
           </div>
           <Col>
-            <Row className='padded-row'>
+            <Row className='padded-row mx-auto'>
               <div className='center-input'>
-                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('customRowActions')}>New Custom Row Action</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('customRowActions')}>New Custom Row Action</Button>
               </div>
               <div className='center-input'>
-                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.customRowActions.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('customRowActions')}>Clear All Custom Row Actions</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.customRowActions.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('customRowActions')}>Clear All Custom Row Actions</Button>
               </div>
             
             </Row>
@@ -723,12 +716,12 @@ class App extends Component {
         <Row>
           <Col>
           {this.state.children.length !== 0 ? 
-            <Row className='padded-row'>
+            <Row className='padded-row mx-auto'>
               <div className='center-input'>
-                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('children')}>Insert Child</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('children')}>Insert Child</Button>
               </div>
               <div className='center-input'>
-                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.children.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('children')}>Clear All Children</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.children.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('children')}>Clear All Children</Button>
               </div>
             
             </Row>
@@ -742,12 +735,12 @@ class App extends Component {
             </Row>
            
 
-            <Row className='padded-row'>
+            <Row className='padded-row mx-auto'>
               <div className='center-input'>
-                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('addChildren')}>New Child</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='success' onClick={() => this.newKey('addChildren')}>New Child</Button>
               </div>
               <div className='center-input'>
-                <Button type='button' className='mx-auto remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.children.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('children')}>Clear All Children</Button>
+                <Button type='button' className='remove-text-highlighting add-remove-property-button' color='danger' style={{ 'visibility': this.state.children.length > 0 ? 'Visible' : 'hidden'}} onClick={() => this.clearAllKeys('children')}>Clear All Children</Button>
               </div>
             </Row>
             
