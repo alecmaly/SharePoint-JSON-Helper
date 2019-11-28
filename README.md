@@ -1,2 +1,2 @@
 ## Website
-Site is hosted on Heroku [Heroku](http://sharepoint-json-formatter.herokuapp.com/)
+Site is hosted on [Heroku](http://sharepoint-json-formatter.herokuapp.com/)
