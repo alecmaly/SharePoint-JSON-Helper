@@ -475,7 +475,7 @@ class App extends Component {
 
 
   buildJSON() {
-    console.log(this.state)
+    // console.log(this.state)
     let indent = 0;
     var JSON_Body = ``;
     var JSON_Header = 
