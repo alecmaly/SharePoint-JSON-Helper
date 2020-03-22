@@ -100,19 +100,87 @@ export default {
             ]
         },
         template_dataBars_hundred: {
-            attributes: [
-                {
-                    name: 'class',
-                    value: 'sp-field-dataBars'
-                }
-            ],
-            properties: [
-                {
-                    name: 'width',
-                    value: '@currentField++%'
-                }
-            ]
+          attributes: [
+              {
+                  name: 'class',
+                  value: 'sp-field-dataBars'
+              }
+          ],
+          properties: [
+              {
+                  name: 'width',
+                  value: '@currentField++%'
+              }
+          ]
         },
+        template_buttonWithLinkandIcon: {
+          // button
+          // currentText = " ++@currentField
+          properties: [
+            {
+              name: 'display',
+              value: 'block'
+            },
+            {
+              name: 'width',
+              value: '9em'
+            },
+            {
+              name: 'background-color',
+              value: '#FFA450'
+            },
+            {
+              name: 'border',
+              value: '2px solid black'
+            },
+            {
+              name: "border-radius",
+              value: "15px"
+            },
+          ],
+          children: [
+              {
+                name: {
+                  elmType: "a",
+                  textContent: " ++@currentField",
+                  properties: [
+                    {
+                      name: "text-decoration",
+                      value: "none"
+                    }
+                  ],
+                  attributes: [
+                    {
+                      name: "target",
+                      value: "_blank"
+                    },
+                    {
+                      name: "href",
+                      value: "https://www.google.com?ID=++[$ID]"
+                    },
+                    {
+                      name: "iconName",
+                      value: "Link"
+                    }
+                  ]
+                },
+                value: ''
+              },
+
+          ]
+          // children: [ 
+          //   {
+
+          // ]
+          
+            // child: a
+            // target = _blank
+            // href =
+
+        },
+      
+
+
         modalBody_TextContentHelp: `
         <b onClick={this.props.newProperty}>@currentField</b> - refers to text in current field. <br>
         <b>@currentField.title</b> - Person fields are represented in the system as objects, and a person’s display name is contained within that object’s title property <br>

@@ -85,6 +85,9 @@ class TopNavigation extends Component {
                                     <DropdownItem name='template' value='Data Bars 100' onClick={this.props.navButtonClick}>
                                         Data Bars 0-100
                                     </DropdownItem>
+                                    <DropdownItem name='template' value='Button with link + icon' onClick={this.props.navButtonClick}>
+                                        Button with link + icon
+                                    </DropdownItem>
                                 </DropdownMenu>
                         </UncontrolledDropdown>
                     </Nav>

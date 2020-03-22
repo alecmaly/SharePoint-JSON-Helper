@@ -48,7 +48,7 @@ class customRowAction extends Component {
             }, () => { this.props.buildJSON() });
         }
 
-     
+
     }
 
 
@@ -62,7 +62,7 @@ class customRowAction extends Component {
     moveRule(ele, index) {
         let arr = this.state.value.slice();
         let temp = arr[index];
-    
+
         console.log(arr);
         switch(ele.target.attributes.value.value) {
             case 'up':

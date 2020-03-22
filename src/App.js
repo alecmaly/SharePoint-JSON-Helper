@@ -235,7 +235,7 @@ class App extends Component {
         arr.splice(0, 0, {'name': "action", 'value': "executeFlow"});
         this.buildKey('customRowActions', arr);
         break;
-        
+
 
 
       case 'template':
@@ -248,16 +248,24 @@ class App extends Component {
           case 'Data Bars 1':
               this.resetForm();
               arr = data.template_dataBars_one;
-              
+
               this.buildKey('properties', arr.properties);
               this.buildKey('attributes', arr.attributes);
               break;
           case 'Data Bars 100':
             this.resetForm();
             arr = data.template_dataBars_hundred;
-            
+
             this.buildKey('properties', arr.properties);
             this.buildKey('attributes', arr.attributes);
+            break;
+          case 'Button with link + icon':
+            this.resetForm();
+            arr = data.template_buttonWithLinkandIcon;
+
+            this.setState({'elmType': 'button', textContent: ''})
+            this.buildKey('properties', arr.properties);
+            this.buildKey('children', arr.children)
             break;
         }
     }
@@ -467,6 +475,7 @@ class App extends Component {
 
 
   buildJSON() {
+    console.log(this.state)
     let indent = 0;
     var JSON_Body = ``;
     var JSON_Header = 
