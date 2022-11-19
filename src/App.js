@@ -598,8 +598,8 @@ class App extends Component {
               <Col sm='2' md='2' lg='2' xl='2'>
                 <div class='share-container'>
                   <span style={{'font-size': '15pt'}}>Share</span><br />
-                  <a target='_blank' href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fsharepoint-json-formatter.herokuapp.com" class="fa fa-facebook"></a>
-                  <a target='_blank' href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fsharepoint-json-formatter.herokuapp.com" class="fa fa-twitter"></a>
+                  <a target='_blank' href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fsharepoint-json-helper.alecmaly.com" class="fa fa-facebook"></a>
+                  <a target='_blank' href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fsharepoint-json-helper.alecmaly.com" class="fa fa-twitter"></a>
                   <a target='_blank' href='https://www.linkedin.com/cws/share?url=https%3A%2F%2Fsharepoint-json-formatter%2Eherokuapp%2Ecom&lang=en_US' class='fa fa-linkedin'></a>
                 </div>
               </Col>
